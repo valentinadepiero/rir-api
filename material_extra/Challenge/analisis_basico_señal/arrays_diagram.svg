@@ -1,0 +1,165 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo general -->
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Título principal -->
+  <rect x="50" y="20" width="700" height="40" fill="#2c3e50" rx="5" ry="5" />
+  <text x="400" y="47" font-family="Arial" font-size="20" text-anchor="middle" font-weight="bold" fill="white">Visualización de Arrays en el Sistema de Señal Sinusoidal</text>
+  
+  <!-- SECCIÓN 1: Vector de tiempo -->
+  <rect x="50" y="80" width="700" height="150" fill="#ecf0f1" stroke="#3498db" stroke-width="2" rx="8" ry="8" />
+  <rect x="50" y="80" width="700" height="30" fill="#3498db" rx="8" ry="8" />
+  <text x="400" y="102" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold" fill="white">1. Generación del vector de tiempo t</text>
+  
+  <!-- Código con formato -->
+  <rect x="70" y="120" width="660" height="40" fill="#ffffff" stroke="#bdc3c7" stroke-width="1" rx="4" ry="4" />
+  <text x="90" y="140" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50" font-weight="bold">t = np.arange(0, duracion, 1/fs)</text>
+  <text x="90" y="155" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">t = np.arange(0, 1.0, 1/1000)   # Genera 1000 puntos desde 0 hasta 0.999</text>
+  
+  <!-- Tabla de valores -->
+  <rect x="70" y="170" width="660" height="50" fill="#ffffff" stroke="#3498db" stroke-width="1" rx="0" ry="0" />
+  
+  <!-- Cabeceras de índices -->
+  <rect x="70" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="110" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="150" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="190" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="230" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="270" y="170" width="60" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="330" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="370" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="410" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  <rect x="450" y="170" width="40" height="25" fill="#3498db" opacity="0.2" />
+  
+  <!-- Índices -->
+  <text x="90" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[0]</text>
+  <text x="130" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[1]</text>
+  <text x="170" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[2]</text>
+  <text x="210" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[3]</text>
+  <text x="250" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[4]</text>
+  <text x="300" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">...</text>
+  <text x="350" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[996]</text>
+  <text x="390" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[997]</text>
+  <text x="430" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[998]</text>
+  <text x="470" y="187" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[999]</text>
+  
+  <!-- Valores -->
+  <text x="90" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.000</text>
+  <text x="130" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.001</text>
+  <text x="170" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.002</text>
+  <text x="210" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.003</text>
+  <text x="250" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.004</text>
+  <text x="300" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">...</text>
+  <text x="350" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.996</text>
+  <text x="390" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.997</text>
+  <text x="430" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.998</text>
+  <text x="470" y="210" font-family="Courier New" font-size="13" text-anchor="middle" fill="#3498db">0.999</text>
+  
+  <!-- Etiqueta informativa -->
+  <text x="650" y="210" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d" font-style="italic">Array de 1000 elementos (0 a 0.999)</text>
+  
+  <!-- SECCIÓN 2: Array de señal -->
+  <rect x="50" y="240" width="700" height="210" fill="#ecf0f1" stroke="#27ae60" stroke-width="2" rx="8" ry="8" />
+  <rect x="50" y="240" width="700" height="30" fill="#27ae60" rx="8" ry="8" />
+  <text x="400" y="262" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold" fill="white">2. Generación del array de señal</text>
+  
+  <!-- Código con formato -->
+  <rect x="70" y="280" width="660" height="40" fill="#ffffff" stroke="#bdc3c7" stroke-width="1" rx="4" ry="4" />
+  <text x="90" y="300" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50" font-weight="bold">señal = amplitud * np.sin(2 * np.pi * frecuencia * t)</text>
+  <text x="90" y="315" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">señal = 2.0 * np.sin(2 * 3.14159 * 5 * t)   # 5 Hz, amplitud 2.0</text>
+  
+  <!-- Tabla de valores -->
+  <rect x="70" y="330" width="660" height="50" fill="#ffffff" stroke="#27ae60" stroke-width="1" rx="0" ry="0" />
+  
+  <!-- Cabeceras de índices -->
+  <rect x="70" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="110" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="150" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="190" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="230" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="270" y="330" width="60" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="330" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="370" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="410" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  <rect x="450" y="330" width="40" height="25" fill="#27ae60" opacity="0.2" />
+  
+  <!-- Índices -->
+  <text x="90" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[0]</text>
+  <text x="130" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[1]</text>
+  <text x="170" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[2]</text>
+  <text x="210" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[3]</text>
+  <text x="250" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[4]</text>
+  <text x="300" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">...</text>
+  <text x="350" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[996]</text>
+  <text x="390" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[997]</text>
+  <text x="430" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[998]</text>
+  <text x="470" y="347" font-family="Courier New" font-size="13" text-anchor="middle" fill="#2c3e50">[999]</text>
+  
+  <!-- Valores -->
+  <text x="90" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">0.000</text>
+  <text x="130" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">0.031</text>
+  <text x="170" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">0.063</text>
+  <text x="210" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">0.094</text>
+  <text x="250" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">0.125</text>
+  <text x="300" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">...</text>
+  <text x="350" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">-0.125</text>
+  <text x="390" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">-0.094</text>
+  <text x="430" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">-0.063</text>
+  <text x="470" y="370" font-family="Courier New" font-size="13" text-anchor="middle" fill="#27ae60">-0.031</text>
+  
+  <!-- Etiqueta informativa -->
+  <text x="650" y="370" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d" font-style="italic">Array de 1000 elementos (valores sinusoidales)</text>
+  
+  <!-- Visualización gráfica de la señal -->
+  <rect x="70" y="390" width="660" height="50" fill="#ffffff" stroke="#27ae60" stroke-width="1" rx="0" ry="0" />
+  
+  <!-- Línea central -->
+  <line x1="70" y1="415" x2="730" y2="415" stroke="#bdc3c7" stroke-width="1" />
+  
+  <!-- Forma de onda sinusoidal -->
+  <path d="M70 415 
+           Q 87 395, 104 415 
+           Q 121 435, 138 415
+           Q 155 395, 172 415
+           Q 189 435, 206 415
+           Q 223 395, 240 415
+           Q 257 435, 274 415
+           Q 291 395, 308 415
+           Q 325 435, 342 415
+           Q 359 395, 376 415
+           Q 393 435, 410 415
+           Q 427 395, 444 415
+           Q 461 435, 478 415
+           Q 495 395, 512 415
+           Q 529 435, 546 415
+           Q 563 395, 580 415
+           Q 597 435, 614 415
+           Q 631 395, 648 415
+           Q 665 435, 682 415
+           Q 699 395, 716 415
+           Q 733 435, 750 415" 
+        fill="none" stroke="#e74c3c" stroke-width="2" />
+  
+  <!-- Etiqueta del gráfico -->
+  <text x="650" y="405" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d" font-style="italic">Representación de 5 ciclos completos (5 Hz)</text>
+  
+  <!-- SECCIÓN 3: Cálculo de estadísticas -->
+  <rect x="50" y="460" width="700" height="130" fill="#ecf0f1" stroke="#e67e22" stroke-width="2" rx="8" ry="8" />
+  <rect x="50" y="460" width="700" height="30" fill="#e67e22" rx="8" ry="8" />
+  <text x="400" y="482" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold" fill="white">3. Cálculo de estadísticas del array de señal</text>
+  
+  <!-- Código con formato -->
+  <rect x="70" y="500" width="660" height="80" fill="#ffffff" stroke="#bdc3c7" stroke-width="1" rx="4" ry="4" />
+  
+  <!-- Código de estadísticas -->
+  <text x="90" y="520" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50" font-weight="bold">stats = {</text>
+  <text x="130" y="540" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">"valor_maximo": np.max(señal),          <tspan fill="#e67e22"># = 2.0000</tspan></text>
+  <text x="130" y="560" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">"valor_minimo": np.min(señal),          <tspan fill="#e67e22"># = -2.0000</tspan></text>
+  <text x="130" y="580" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">"valor_medio": np.mean(señal),          <tspan fill="#e67e22"># = 0.0000</tspan></text>
+  <text x="130" y="600" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50">"desviacion_estandar": np.std(señal)    <tspan fill="#e67e22"># = 1.4142</tspan></text>
+  <text x="90" y="620" font-family="Courier New" font-size="14" text-anchor="start" fill="#2c3e50" font-weight="bold">}</text>
+  
+  <!-- Leyenda con información adicional -->
+  <rect x="50" y="595" width="700" height="25" fill="#ecf0f1" opacity="0.5" />
+  <text x="400" y="613" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d">Los valores de las estadísticas confirman: amplitud = 2.0 (max/min), ciclos completos (media = 0)</text>
+</svg>
