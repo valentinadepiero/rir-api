@@ -1,0 +1,106 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo y bordes -->
+  <rect x="0" y="0" width="800" height="600" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Título del diagrama -->
+  <text x="400" y="30" font-family="Arial" font-size="20" text-anchor="middle" font-weight="bold">Sistema de Análisis de Señal Sinusoidal</text>
+  
+  <!-- SECCIÓN DE ENTRADAS -->
+  <rect x="10" y="60" width="240" height="130" fill="#e9f6fe" stroke="#0077b6" stroke-width="2" rx="5" ry="5" />
+  <text x="130" y="80" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">ENTRADAS</text>
+  
+  <!-- Parámetros de entrada -->
+  <rect x="30" y="90" width="200" height="90" fill="#e6f3ff" stroke="#0066cc" stroke-width="2" rx="5" ry="5" />
+  <text x="130" y="110" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Parámetros de Entrada</text>
+  <text x="130" y="130" font-family="Arial" font-size="12" text-anchor="middle">frecuencia = 5 Hz</text>
+  <text x="130" y="150" font-family="Arial" font-size="12" text-anchor="middle">amplitud = 2.0</text>
+  <text x="130" y="170" font-family="Arial" font-size="12" text-anchor="middle">duración = 1.0 s</text>
+  
+  <!-- Bloque de muestreo -->
+  <rect x="30" y="200" width="200" height="50" fill="#e6ffe6" stroke="#009900" stroke-width="2" rx="5" ry="5" />
+  <text x="130" y="230" font-family="Arial" font-size="14" text-anchor="middle">fs = 1000 Hz (muestreo)</text>
+  
+  <!-- SECCIÓN DE PROCESAMIENTO -->
+  <rect x="280" y="60" width="240" height="350" fill="#f9f0ff" stroke="#7b2cbf" stroke-width="2" rx="5" ry="5" />
+  <text x="400" y="80" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">PROCESAMIENTO</text>
+  
+  <!-- Flechas desde parámetros a función -->
+  <path d="M230 140 L340 140 L340 190" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrow)" />
+  <path d="M230 225 L340 225 L340 190" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrow)" />
+  
+  <!-- Función generar_senoidal -->
+  <rect x="290" y="100" width="220" height="100" fill="#ffe6e6" stroke="#cc0000" stroke-width="2" rx="5" ry="5" />
+  <text x="400" y="120" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">generar_senoidal()</text>
+  <text x="400" y="140" font-family="Arial" font-size="12" text-anchor="middle">t = np.arange(0, duracion, 1/fs)</text>
+  <text x="400" y="160" font-family="Arial" font-size="12" text-anchor="middle">señal = amplitud * np.sin(2*π*f*t)</text>
+  <text x="400" y="180" font-family="Arial" font-size="12" text-anchor="middle">return t, señal</text>
+  
+  <!-- Flecha desde generar_senoidal a calcular_estadisticas -->
+  <path d="M400 200 L400 250" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrow)" />
+  
+  <!-- Función calcular_estadisticas -->
+  <rect x="290" y="250" width="220" height="150" fill="#e6e6ff" stroke="#0000cc" stroke-width="2" rx="5" ry="5" />
+  <text x="400" y="270" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">calcular_estadisticas()</text>
+  <text x="400" y="290" font-family="Arial" font-size="12" text-anchor="middle" font-weight="bold">Estadísticas:</text>
+  <text x="400" y="310" font-family="Arial" font-size="12" text-anchor="middle">valor_maximo: 2.0000</text>
+  <text x="400" y="330" font-family="Arial" font-size="12" text-anchor="middle">valor_minimo: -2.0000</text>
+  <text x="400" y="350" font-family="Arial" font-size="12" text-anchor="middle">valor_medio: 0.0000</text>
+  <text x="400" y="370" font-family="Arial" font-size="12" text-anchor="middle">desviacion_estandar: 1.4142</text>
+  <text x="400" y="390" font-family="Arial" font-size="12" text-anchor="middle">return estadísticas</text>
+  
+  <!-- SECCIÓN DE SALIDAS -->
+  <rect x="550" y="60" width="240" height="350" fill="#fff2e6" stroke="#ff9900" stroke-width="2" rx="5" ry="5" />
+  <text x="670" y="80" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">SALIDAS</text>
+  
+  <!-- Flecha desde generar_senoidal a visualización -->
+  <path d="M510 150 L600 150" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrow)" />
+  
+  <!-- Flecha desde calcular_estadisticas a resumen -->
+  <path d="M510 300 L600 300" fill="none" stroke="#666666" stroke-width="2" marker-end="url(#arrow)" />
+  
+  <!-- Visualización de señal en gráfica -->
+  <rect x="570" y="100" width="200" height="150" fill="#f5f5f5" stroke="#333333" stroke-width="2" rx="5" ry="5" />
+  <text x="670" y="120" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Gráfica de Señal</text>
+  
+  <!-- Mini gráfico de onda senoidal -->
+  <path d="M580 180 
+           Q 600 140, 620 180 
+           Q 640 220, 660 180
+           Q 680 140, 700 180
+           Q 720 220, 740 180
+           Q 760 140, 780 180" 
+        fill="none" stroke="#cc0000" stroke-width="2" />
+  
+  <!-- Ejes -->
+  <line x1="580" y1="180" x2="760" y2="180" stroke="#333333" stroke-width="1" />
+  <line x1="580" y1="140" x2="580" y2="220" stroke="#333333" stroke-width="1" />
+  
+  <!-- Etiquetas de ejes -->
+  <text x="670" y="240" font-family="Arial" font-size="12" text-anchor="middle">Tiempo (s)</text>
+  <text x="560" y="180" font-family="Arial" font-size="12" text-anchor="middle" transform="rotate(-90 560 180)">Amplitud</text>
+  
+  <!-- Resumen estadístico -->
+  <rect x="570" y="270" width="200" height="130" fill="#e6ffee" stroke="#00cc66" stroke-width="2" rx="5" ry="5" />
+  <text x="670" y="290" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Resumen Estadístico</text>
+  <text x="670" y="310" font-family="Arial" font-size="12" text-anchor="middle">Frecuencia: 5 Hz</text>
+  <text x="670" y="330" font-family="Arial" font-size="12" text-anchor="middle">Amplitud: 2.0</text>
+  <text x="670" y="350" font-family="Arial" font-size="12" text-anchor="middle">Valor medio: 0.0000</text>
+  <text x="670" y="370" font-family="Arial" font-size="12" text-anchor="middle">Desv. estándar: 1.4142</text>
+  <text x="670" y="390" font-family="Arial" font-size="12" text-anchor="middle">Muestras: 1000</text>
+  
+  <!-- Fórmula principal explicada -->
+  <rect x="130" y="450" width="540" height="120" fill="#e6ffee" stroke="#00cc66" stroke-width="2" rx="5" ry="5" />
+  <text x="400" y="470" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">MODELO MATEMÁTICO</text>
+  <text x="400" y="500" font-family="Arial" font-size="14" text-anchor="middle">y(t) = A·sin(2πft)</text>
+  <text x="250" y="530" font-family="Arial" font-size="14" text-anchor="middle">A = amplitud (2.0)</text>
+  <text x="400" y="530" font-family="Arial" font-size="14" text-anchor="middle">f = frecuencia (5 Hz)</text>
+  <text x="550" y="530" font-family="Arial" font-size="14" text-anchor="middle">t = tiempo (s)</text>
+  <text x="400" y="560" font-family="Arial" font-size="14" text-anchor="middle">Número de muestras = duración · fs = 1.0 s · 1000 Hz = 1000 muestras</text>
+  
+  <!-- Definición de marcador de flecha -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#666666" />
+    </marker>
+  </defs>
+</svg>

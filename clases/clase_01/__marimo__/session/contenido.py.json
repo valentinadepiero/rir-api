@@ -1,0 +1,378 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.21.1",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "74f044d3c4f3d3d8bfe85c5829d2cee0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"senales-y-sistemas-practica-2026\">Senales y Sistemas - Practica 2026</h1>\n<h2 id=\"clase-1-el-punto-de-partida\">Clase 1: El Punto de Partida</h2>\n<span class=\"paragraph\">Bienvenidos a la practica de <strong>Senales y Sistemas</strong>. Este curso se estructura en torno a <strong>3 pilares</strong>:</span>\n<table>\n<thead>\n<tr>\n<th>Pilar</th>\n<th>Nombre</th>\n<th>Descripcion</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><strong>P1</strong></td>\n<td>Programacion</td>\n<td>Python desde cero hasta procesamiento de senales</td>\n</tr>\n<tr>\n<td><strong>P2</strong></td>\n<td>Vibecoding &amp; IA</td>\n<td>Uso de inteligencia artificial como asistente de codigo</td>\n</tr>\n<tr>\n<td><strong>P3</strong></td>\n<td>Desarrollo de software</td>\n<td>Git, testing, arquitectura de proyectos</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">Hoy nos enfocamos en <strong>P1</strong> (fundamentos de Python), con una introduccion a <strong>P3</strong> (Git) y un teaser de <strong>P2</strong> (vibecoding).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "d62a749de56254f72b89144f737c9379",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"que-es-un-mvp\">Que es un MVP?</h2>\n<span class=\"paragraph\"><strong>MVP</strong> = <em>Minimum Viable Product</em> (Producto Minimo Viable)</span>\n<span class=\"paragraph\">En el contexto de software de audio, un MVP es la version mas simple de tu programa que <strong>funciona y es util</strong>. Por ejemplo:</span>\n<ul>\n<li>Un ecualizador MVP: solo ajusta graves y agudos (2 bandas), sin interfaz grafica.</li>\n<li>Un reproductor MVP: abre un archivo WAV y lo reproduce, nada mas.</li>\n<li>Un analizador MVP: calcula el nivel RMS de una senal y lo imprime.</li>\n</ul>\n<span class=\"paragraph\">La idea es <strong>construir algo que funcione rapido</strong>, y despues iterar y mejorar. En este curso, cada trabajo practico arranca con un MVP.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "71ccf16a0a5b3c76a8c05853eadc7620",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"variables-en-python\">Variables en Python</h2>\n<span class=\"paragraph\">Una variable es un <strong>nombre</strong> que apunta a un <strong>valor</strong> en memoria. En el contexto de audio, usamos variables todo el tiempo:</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "891576efc165b841675ef324c414f8d3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Sample rate: 44100 Hz\nCanal: Left\nAmplitud: 0.8\nEstereo: True\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "PKri",
+      "code_hash": "9a96243e8d93daca52ca89ec7a1d1979",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"tipos-de-datos\">Tipos de datos</h2>\n<span class=\"paragraph\">Python tiene varios tipos de datos fundamentales. Usamos <code>type()</code> para verificar el tipo de una variable:</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "80e1cc4758b92db2eed5891701266fdc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "frecuencia = 440 -> tipo: int\nduracion = 2.5 -> tipo: float\nformato = 'WAV' -> tipo: str\ngrabando = False -> tipo: bool\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "1a51343091e46be9a391267e4ee200f9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"conversion-de-tipos\">Conversion de tipos</h3>\n<span class=\"paragraph\">A veces necesitamos convertir entre tipos. Esto se llama <em>casting</em>:</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "9591f8f86c60703060761c5408a291fd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "'48000' convertido a int: 48000, tipo: int\n132300 convertido a float: 132300.0\n-6.2 convertido a str: '-6.2'\nint(True) = 1, int(False) = 0\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "9b8dc848a04303af4110fcd3c96b8b1c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"operadores-aritmeticos\">Operadores aritmeticos</h2>\n<span class=\"paragraph\">Python soporta todos los operadores matematicos que necesitamos para calculos de audio:</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "e4d90025e0b18bbe2e7809ca0b9470c1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== Operadores Aritmeticos ===\nSuma:           10 + 3  = 13\nResta:          10 - 3  = 7\nMultiplicacion: 10 * 3  = 30\nDivision:       10 / 3  = 3.3333\nDivision entera:10 // 3 = 3\nModulo:         10 % 3  = 1\nPotencia:       2 ** 10 = 1024\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "emfo",
+      "code_hash": "6c8838bcb607cc0290913fab943321a1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"ejemplo-practico-calculos-de-audio-digital\">Ejemplo practico: calculos de audio digital</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "96eca31b7f34f7a26f398d813b2fd71e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Sample rate:      44100 Hz\nDuracion:         3.0 s\nCanales:          2\nBit depth:        16 bits\n---\nTotal muestras:   132,300\nMuestras estereo: 264,600\nBytes por muestra:2\nTamano total:     529,200 bytes\nTamano en MB:     0.50 MB\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "9968bcd8b5e172cf7f3082f6433b539a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"operadores-de-comparacion-y-logicos\">Operadores de comparacion y logicos</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "60bec9ee8b495cef7958d36351d78efa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "=== Comparacion ===\n44100 == 44100:  True\n44100 != 48000:  True\n44100 > 22050:  True\n44100 >= 44100: True\n44100 < 96000:  True\n\n=== Logicos ===\nCD quality AND bit depth OK: True\nProfesional OR CD quality:   True\nNOT profesional:             True\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "fcaa9e7e47ce54f0105fae87d21eb705",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"strings-cadenas-de-texto\">Strings (cadenas de texto)</h2>\n<span class=\"paragraph\">Los strings son fundamentales para manejar nombres de archivos, metadatos, y mensajes. Python tiene herramientas muy poderosas para trabajar con texto:</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "2015fe1abc20926d1858fa42fc889a14",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Original:     WAV_recording_01.wav\nMayusculas:   WAV_RECORDING_01.WAV\nMinusculas:   wav_recording_01.wav\nSplit por _:  ['WAV', 'recording', '01.wav']\nEmpieza con WAV: True\nTermina con .wav: True\nReemplazar:   WAV_recording_01.mp3\nLongitud:     20 caracteres\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "32648a8567cad22e52cf18cce0db298e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Archivo: grabacion_estudio_2026.wav\nPrimeros 9 caracteres: grabacion\nUltimos 4 caracteres:  .wav\nExtension:             wav\nSin extension:         grabacion_estudio_2026\nCaracter 10 al 17:     estudio\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "cbcbc0a4f43ed501291a8ce1c7b08cf7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "\n=== Informacion del Album ===\nArtista:    Pink Floyd\nAlbum:      Dark Side of the Moon\nDuracion:   43:00\nSample Rate:44,100 Hz\nMuestras:   113,778,000\n\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "789715c3878c0ad1fdd883d93857fc71",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"input-y-output\">Input y Output</h2>\n<span class=\"paragraph\">La funcion <code>print()</code> permite mostrar informacion formateada. La funcion <code>input()</code> permite leer datos del usuario (aunque en notebooks no la usamos tanto).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "DnEU",
+      "code_hash": "fc8b627fd615e0cb3b0fff32f1711821",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Nota | Frecuencia (Hz)\n-----|----------------\nA4   |     440.00 Hz\nB4   |     493.88 Hz\nC5   |     523.25 Hz\nD5   |     587.33 Hz\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "ulZA",
+      "code_hash": "d97836520862bdc558ba7c38fe7b8a24",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"que-es-el-vibecoding\">Que es el Vibecoding?</h2>\n<span class=\"paragraph\"><strong>Vibecoding</strong> es un enfoque de programacion donde usas <strong>inteligencia artificial</strong> (como Claude, ChatGPT, etc.) para generar codigo a partir de descripciones en lenguaje natural.</span>\n<h3 id=\"ejemplo-hipotetico\">Ejemplo hipotetico</h3>\n<span class=\"paragraph\"><strong>Prompt:</strong></span>\n<blockquote>\n<span class=\"paragraph\">\"Escribi una funcion en Python que convierta un numero de nota MIDI a su frecuencia en Hz.\nLa formula es: f = 440 * 2^((midi - 69) / 12). Agrega docstring y type hints.\"</span>\n</blockquote>\n<span class=\"paragraph\"><strong>Resultado generado por la IA:</strong></span>\n<div class=\"language-python codehilite\"><pre><span></span><code><span class=\"k\">def</span><span class=\"w\"> </span><span class=\"nf\">midi_a_hz</span><span class=\"p\">(</span><span class=\"n\">nota_midi</span><span class=\"p\">:</span> <span class=\"nb\">int</span><span class=\"p\">)</span> <span class=\"o\">-&gt;</span> <span class=\"nb\">float</span><span class=\"p\">:</span>\n<span class=\"w\">    </span><span class=\"sd\">&#39;&#39;&#39;Convierte un numero de nota MIDI a frecuencia en Hz.</span>\n\n<span class=\"sd\">    Parameters</span>\n<span class=\"sd\">    ----------</span>\n<span class=\"sd\">    nota_midi : int</span>\n<span class=\"sd\">        Numero de nota MIDI (0-127).</span>\n\n<span class=\"sd\">    Returns</span>\n<span class=\"sd\">    -------</span>\n<span class=\"sd\">    float</span>\n<span class=\"sd\">        Frecuencia en Hz.</span>\n<span class=\"sd\">    &#39;&#39;&#39;</span>\n    <span class=\"k\">return</span> <span class=\"mf\">440.0</span> <span class=\"o\">*</span> <span class=\"p\">(</span><span class=\"mf\">2.0</span> <span class=\"o\">**</span> <span class=\"p\">((</span><span class=\"n\">nota_midi</span> <span class=\"o\">-</span> <span class=\"mi\">69</span><span class=\"p\">)</span> <span class=\"o\">/</span> <span class=\"mf\">12.0</span><span class=\"p\">))</span>\n</code></pre></div>\n<h3 id=\"claves-del-vibecoding\">Claves del vibecoding</h3>\n<ul>\n<li><strong>No reemplaza saber programar</strong>: necesitas entender el codigo para verificar que es correcto.</li>\n<li><strong>Es una herramienta</strong>: como una calculadora, te ayuda a ser mas productivo.</li>\n<li><strong>Ser especifico en el prompt</strong>: cuanto mas claro seas, mejor resultado obtenes.</li>\n<li><strong>Siempre revisar</strong>: la IA puede generar codigo con errores sutiles.</li>\n</ul>\n<span class=\"paragraph\">En las proximas clases vamos a ir incorporando IA como asistente de forma gradual.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ecfG",
+      "code_hash": "b3a968f0cc8819c9839ab5cd2b09ef56",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><hr />\n<h2 id=\"resumen-de-la-clase\">Resumen de la clase</h2>\n<span class=\"paragraph\">Hoy aprendimos:</span>\n<ul>\n<li><strong>Variables</strong>: nombres que apuntan a valores (<code>sample_rate = 44100</code>)</li>\n<li><strong>Tipos</strong>: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code> y conversion entre ellos</li>\n<li><strong>Operadores</strong>: aritmeticos (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>//</code>, <code>%</code>, <code>**</code>), comparacion, logicos</li>\n<li><strong>Strings</strong>: f-strings, slicing, metodos utiles</li>\n<li><strong>Vibecoding</strong>: concepto de usar IA para generar codigo</li>\n</ul>\n<h3 id=\"para-la-proxima-clase\">Para la proxima clase</h3>\n<ul>\n<li>Tener Python 3.12+ instalado</li>\n<li>Tener un editor de codigo (VS Code recomendado)</li>\n<li>Crear un repositorio en GitHub y hacer push de un README.md</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
