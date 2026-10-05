@@ -1,1 +1,0 @@
-../../trabajo_practico/rubrica.md

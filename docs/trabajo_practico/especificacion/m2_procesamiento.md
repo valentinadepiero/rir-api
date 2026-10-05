@@ -1,1 +1,0 @@
-../../../trabajo_practico/especificacion/m2_procesamiento.md

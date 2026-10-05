@@ -1,1 +1,0 @@
-../../../trabajo_practico/especificacion/m2_algebra_deconvolucion.md
