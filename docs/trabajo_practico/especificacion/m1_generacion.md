@@ -1,1 +1,0 @@
-../../../trabajo_practico/especificacion/m1_generacion.md

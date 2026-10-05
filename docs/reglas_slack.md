@@ -1,1 +1,0 @@
-../reglas_slack.md
