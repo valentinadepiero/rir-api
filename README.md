@@ -1,9 +1,7 @@
 # RIR-API
 
 API REST para procesamiento y analisis de respuestas al impulso segun la norma ISO 3382.
-
-<!-- Badge de CI: reemplazar <usuario>/<repo> por los datos del repositorio del grupo -->
-![CI](https://github.com/<usuario>/<repo>/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/valentinadepiero/rir-api/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.12+-blue.svg)
 
 ## Descripcion
@@ -22,45 +20,13 @@ ISO 3382-1.
 
 ## Integrantes
 
-| Nombre | Legajo | Rol |
-|--------|--------|-----|
-| ...    | ...    | ... |
+Valentina De Piero | Legajo 72221 | Responsable de generación de señales
 
 ## Requisitos previos
 
 - Python 3.12 o superior
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes y entornos virtuales)
 - git y una cuenta de GitHub
-
-## Arranque: crear el repositorio del grupo
-
-Cada grupo trabaja en **un repositorio nuevo propio** y copia adentro el contenido de este
-template (no es un fork).
-
-1. Una persona del grupo crea en GitHub un repositorio **vacio** (por ejemplo `rir-api`,
-   sin README ni .gitignore) y agrega al resto del grupo y a los docentes
-   (**@maxiyommi** y **@jero-scafati**) como colaboradores
-   (*Settings → Collaborators → Add people*).
-2. Copiar el template y hacer el primer commit:
-
-```bash
-# Bajar el repositorio de la materia (solo la ultima version)
-git clone --depth 1 https://github.com/maxiyommi/signal-systems.git
-
-# Clonar el repositorio (vacio) del grupo
-git clone https://github.com/<usuario>/rir-api.git
-
-# Copiar el contenido del template (incluye archivos ocultos: .github/, .gitignore)
-cp -r signal-systems/trabajo_practico/template_repo/. rir-api/
-
-cd rir-api
-git add .
-git commit -m "chore: estructura inicial desde el template de la catedra"
-git branch -M main
-git push -u origin main
-```
-
-3. El resto del grupo clona `rir-api` y listo. La carpeta `signal-systems/` se puede borrar.
 
 ## Instalacion y ejecucion
 
@@ -82,6 +48,44 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 
 `uv sync` genera un `uv.lock` con las versiones exactas instaladas: **commitéenlo** en el
 repositorio del grupo para que todos (y el CI) usen las mismas versiones.
+
+## Diagrama de estructura
+flowchart TB
+    C["Cliente<br/>Swagger · frontend · script"]
+    subgraph API["RIR-API (FastAPI)"]
+        direction TB
+        subgraph R["app/routers/"]
+            RH["health.py<br/>GET /health"]
+            RS["signals.py<br/>POST /signals/pink-noise<br/>POST /signals/sine-sweep"]
+            RM2["signals.py<br/>POST /signals/synthetic-ir<br/><br/>filters.py<br/>POST /filters/single-band"]
+            RM3["utils.py<br/>POST /utils/smoothing<br/>POST /utils/schroeder<br/>POST /utils/lundeby<br/><br/>acoustics.py<br/>POST /acoustics/parameters"]
+        end
+        subgraph SC["app/schemas/"]
+            SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
+            SM2["signals.py<br/>SyntheticIRRequest"]
+            SM3["utils.py<br/>SmoothingRequest<br/>SchroederResponse<br/>LundebyResponse<br/><br/>responses.py<br/>BandAnalysisResponse"]
+        end
+        subgraph SV["app/services/"]
+            PN["pink_noise.py<br/>generate_pink_noise"]
+            SW["sine_sweep.py<br/>generate_sine_sweep_pair"]
+            IO["audio_io.py<br/>play_and_record"]
+            VM2["signal_utils.py<br/>load_audio<br/>generate_synthetic_ir<br/>get_impulse_response<br/>logarithmic_scale_conversion<br/><br/>filter.py<br/>filter_single_band"]
+            VM3["acoustic_parameters.py<br/>apply_smoothing<br/>apply_schroeder_integral<br/>linear_regression<br/>calculate_parameters_from_ir<br/>apply_lundeby"]
+        end
+    end
+    L["NumPy · SciPy · sounddevice"]
+    C -->|"request HTTP + JSON"| RS
+    C -->|"sube un WAV"| RM3
+    RS -->|"valida con"| SS
+    RM2 -->|"valida con"| SM2
+    RM3 -->|"valida con"| SM3
+    RS -->|"llama a"| PN
+    SM2 -->|"llama a"| VM2
+    SM3 -->|"llama a"| VM3
+    RS -->|"llama a"| SW
+    PN --> L
+    SW --> L
+    IO --> L
 
 ## Estructura del proyecto
 
