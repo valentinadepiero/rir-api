@@ -50,6 +50,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 repositorio del grupo para que todos (y el CI) usen las mismas versiones.
 
 ## Diagrama de estructura
+```mermaid
 flowchart TB
     C["Cliente<br/>Swagger · frontend · script"]
     subgraph API["RIR-API (FastAPI)"]
@@ -86,6 +87,7 @@ flowchart TB
     PN --> L
     SW --> L
     IO --> L
+```
 
 ## Estructura del proyecto
 
