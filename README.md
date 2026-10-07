@@ -46,8 +46,9 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-`uv sync` genera un `uv.lock` con las versiones exactas instaladas: **commitéenlo** en el
-repositorio del grupo para que todos (y el CI) usen las mismas versiones.
+## Branching strategy
+La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por integrante que realicen commits a dev para unificarlas.
+
 
 ## Diagrama de estructura
 ```mermaid
@@ -128,105 +129,6 @@ rir-api/
 ├── pyproject.toml                 # Dependencias y configuracion (ruff, pytest)
 └── README.md
 ```
-
-Cada milestone expone lo que construye: los routers y schemas de `signals` se agregan en M1
-(y suman `synthetic-ir` en M2), los de `filters` en M2 y los de `acoustics` y `utils` en M3
-(ver los `TODO` en `app/main.py`).
-
-## Milestones y entregas (2C 2026)
-
-| Milestone | Entrega | Tag | Evaluacion |
-|-----------|---------|-----|------------|
-| **M0 · El plano** (arquitectura) | mie 7/10 (asincronica, por Slack/GitHub) | — | Seguimiento, sin nota |
-| **M1 · Generacion de senales** | mie 28/10 (en clase) | `v0.1.0` | Seguimiento, sin nota |
-| **M2 · Procesamiento de la RI** | mie 4/11 | `v0.2.0` | Seguimiento, sin nota |
-| **M3 · Producto final** + presentacion oral | mie 18/11 | `v1.0.0` | **Nota del TP: 60 % M3 + 40 % oral** |
-
-- No hay informe escrito: la validacion de resultados va en una seccion **"Validacion"** de
-  este README.
-- **`AI_LOG.md`** en la raiz del repositorio es **obligatorio** (sin nota propia, pero sin
-  `AI_LOG.md` M3 no se considera completo): registren el uso de herramientas de IA durante
-  todo el proyecto.
-- Detalle de cada milestone: <https://maxiyommi.github.io/signal-systems/trabajo_practico/ruta/>
-
-### M0 · El plano
-
-- [ ] Repositorio del grupo creado a partir del template, con los docentes como colaboradores.
-- [ ] `uv sync`, `uv run uvicorn app.main:app --reload` y `uv run pytest` funcionan.
-- [ ] README con integrantes y roles, instalacion, estructura y branching strategy.
-- [ ] Diagrama de arquitectura (Mermaid o draw.io) con todos los modulos de M1, M2 y M3.
-- [ ] Al menos 10 issues con labels (`milestone-1`, `milestone-2`, `milestone-3`) y asignados.
-
-### M1 · Generacion de senales (`v0.1.0`)
-
-- [ ] `generate_pink_noise()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
-- [ ] `generate_sine_sweep_pair()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
-- [ ] `play_and_record()` en `app/services/audio_io.py`.
-- [ ] Endpoints `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep` (devuelven WAV),
-      con sus schemas en `app/schemas/signals.py`.
-- [ ] Tests de `tests/test_generacion.py` y los de M1 en `tests/test_api.py` pasando;
-      graficas de validacion en `docs/m1/`.
-
-### M2 · Procesamiento de la RI (`v0.2.0`)
-
-- [ ] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
-      `logarithmic_scale_conversion()` en `app/services/signal_utils.py`.
-- [ ] `filter_single_band()` en `app/services/filter.py`.
-- [ ] Endpoints `POST /api/v1/signals/synthetic-ir` y `POST /api/v1/filters/single-band`
-      (recibe un WAV subido).
-- [ ] Tests de `tests/test_procesamiento.py` y los de M2 en `tests/test_api.py` pasando.
-
-### M3 · Producto final (`v1.0.0`)
-
-- [ ] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
-      `calculate_parameters_from_ir()` en `app/services/acoustic_parameters.py`.
-- [ ] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
-      `POST /api/v1/utils/smoothing`: la API completa.
-- [ ] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
-- [ ] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
-- [ ] (Opcional) `apply_lundeby()`.
-
-## Tests
-
-Las funciones de `app/services/` vienen como *stubs* que lanzan `NotImplementedError`. Sus
-tests estan marcados como `xfail` (fallo esperado), asi el CI queda en verde desde el
-primer dia:
-
-- Mientras la funcion no este implementada, el test aparece como `x` (xfailed).
-- Cuando la implementen bien, aparece como `X` (xpassed). En ese momento conviene **borrar
-  la marca `xfail`** del modulo de tests (`pytestmark = ...`) para que el test cuente como
-  un test normal. En `tests/test_api.py` la marca va test por test (`@xfail_m1`,
-  `@xfail_m2`, `@xfail_m3`): borren la de cada endpoint que implementen.
-- Si la implementacion es incorrecta, el test **falla** (rojo) con el `AssertionError`.
-
-```bash
-uv run pytest                                  # todos los tests
-uv run pytest -v tests/test_generacion.py      # un archivo, con detalle
-uv run pytest -v -k pink_noise                 # tests cuyo nombre contiene "pink_noise"
-uv run pytest -rxX                             # listar xfailed / xpassed
-uv run pytest --cov=app                        # con cobertura
-```
-
-`play_and_record` se testea con un *mock* de `sounddevice`, por lo que el CI no necesita
-placa de audio. Para probarla de verdad, corran la funcion localmente con un parlante y un
-microfono y documenten la configuracion (dispositivo, canales, fs, buffer size).
-
-## Linter y formato
-
-```bash
-uv run ruff check app/ tests/          # verificar estilo
-uv run ruff check --fix app/ tests/    # corregir lo automatico
-uv run ruff format app/ tests/         # formatear
-```
-
-El CI (`.github/workflows/ci.yml`) corre `ruff check`, `ruff format --check` y
-`pytest --cov=app` en cada push a `main` y en cada pull request.
-
-## Configuracion
-
-`app/settings.py` define la configuracion con `pydantic-settings`. Cualquier valor se puede
-sobreescribir con variables de entorno con prefijo `RIR_` (por ejemplo `RIR_FS_DEFAULT=44100`)
-o con un archivo `.env` en la raiz (ignorado por git).
 
 ## Referencias
 
