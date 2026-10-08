@@ -43,7 +43,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - ReDoc: `http://localhost:8000/redoc`
 
 ## Branching strategy
-La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por integrante que realicen commits a dev para unificarlas.
+La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por cada issue que realicen commits a dev para unificarlas.
 
 
 ## Diagrama de estructura
