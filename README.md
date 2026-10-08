@@ -72,6 +72,8 @@ flowchart TB
         end
     end
     L["NumPy · SciPy · sounddevice"]
+    L2["FastAPI "]
+    L3["Pydantic"]
     C -->|"request HTTP + JSON"| RS
     C -->|"sube un WAV"| RM3
     RS -->|"valida con"| SS
@@ -84,6 +86,12 @@ flowchart TB
     PN --> L
     SW --> L
     IO --> L
+    RS --> L2
+    RM2 --> L2
+    RM3 --> L2
+    SS --> L3
+    SM2 --> L3
+    SM3 --> L3
 ```
 
 ## Estructura del proyecto
