@@ -16,9 +16,9 @@ ISO 3382-1.
 
 ## Integrantes
 
-Valentina De Piero | Legajo 72221 | Responsable de generación de señales
-Lorenzo Carballo | Legajo 79360 | Responsable de testeo
-Alexis Nievas | Legajo 79001 | Responsable de documentación
+- Valentina De Piero | Legajo 72221 | Responsable de generación de señales
+- Lorenzo Carballo | Legajo 79360 | Responsable de testeo
+- Alexis Nievas | Legajo 79001 | Responsable de documentación
 
 ## Requisitos previos
 
