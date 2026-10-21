@@ -31,6 +31,9 @@ Valentina De Piero | Legajo 72221 | Responsable de generación de señales
 ## Instalacion y ejecucion
 
 ```bash
+# Clonar el repo
+git clone https://github.com/valentinadepiero/rir-api.git
+
 # Crear el entorno e instalar dependencias (incluye las de desarrollo: pytest, ruff, ...)
 uv sync
 
