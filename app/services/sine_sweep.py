@@ -3,11 +3,13 @@
 Milestone 1: Generacion de senales.
 """
 
+import sounddevice as sd     # testing: borrar despues
 import numpy as np
+import math as ma
 
 
 def generate_sine_sweep_pair(
-    duration: float, f1: float, f2: float, fs: int
+    duracion: float, f1: float, f2: float, fs: int
 ) -> tuple[np.ndarray, np.ndarray]:
     """Genera un barrido senoidal logaritmico (sine sweep) y su filtro inverso.
 
@@ -39,4 +41,29 @@ def generate_sine_sweep_pair(
     .. [1] Farina, A. (2000). "Simultaneous measurement of impulse response
        and distortion with a swept-sine technique." 108th AES Convention.
     """
-    raise NotImplementedError("Implementar en Milestone 1")
+
+    # para generar el array de muestras: entre 0 y duración ubico una cantidad de muestras (duracion * frecuencia de sampleo) separados por intervalos iguales.
+    t = np.linspace(0, duracion, int(duracion * fs))
+
+    # para cada una de las muestras, aplico la formula de sine sweep logaritmico
+    sine_sweep_normalizada = np.array(
+        [ma.sin(
+            (2 * ma.pi * f1 * duracion) *
+            (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1) /
+            ma.log(f2 / f1)
+            ) 
+        for n in t]
+    )
+
+    # sin implementar: devuelvo un array con unos para que no tire error
+    filt_inv_normalizado = np.array([1,1,1])
+
+    return sine_sweep_normalizada, filt_inv_normalizado
+
+
+# testing ---------------------------------------------------
+sinesweep,filtinv = generate_sine_sweep_pair(4,200,2000,16000)
+print(sinesweep)
+
+sd.play(sinesweep) # reproducir
+sd.wait() 
