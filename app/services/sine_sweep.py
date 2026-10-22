@@ -42,11 +42,14 @@ def generate_sine_sweep_pair(
        and distortion with a swept-sine technique." 108th AES Convention.
     """
 
-    # para generar el array de muestras: entre 0 y duración ubico una cantidad de muestras (duracion * frecuencia de sampleo) separados por intervalos iguales.
+    # SINE SWEEP ------------------------------------------
+    # para generar el array de muestras: entre 0 y duración 
+    # ubico una cantidad de muestras (duracion * frecuencia de sampleo) 
+    # separados por intervalos iguales.
     t = np.linspace(0, duracion, int(duracion * fs))
 
     # para cada una de las muestras, aplico la formula de sine sweep logaritmico
-    sine_sweep_normalizada = np.array(
+    sine_sweep = np.array(
         [ma.sin(
             (2 * ma.pi * f1 * duracion) *
             (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1) /
@@ -55,15 +58,30 @@ def generate_sine_sweep_pair(
         for n in t]
     )
 
-    # sin implementar: devuelvo un array con unos para que no tire error
-    filt_inv_normalizado = np.array([1,1,1])
+    # FILTRO INVERSO ---------------------------------------
+    # para cada una de las muestras, aplico la formula de envolvente
+    envolvente = np.array(
+        [ma.exp(-n * ma.log(f2 / f1) / duracion)
+        for n in t]
+    )
+    filt_inv = sine_sweep[::-1] * envolvente   # multiplica muestra a muestra el sine sweep invertido con la envolvente
+
+    # NORMALIZAR --------------------------------------------
+    sine_sweep_normalizada = sine_sweep / np.max(       # max devuelve "the maximum of an array or maximum along an axis."
+        np.abs(sine_sweep))                             # abs devuelve "An ndarray containing the absolute value of each element in x"
+                         
+
+    filt_inv_normalizado = filt_inv / np.max(       
+        np.abs(filt_inv))    
 
     return sine_sweep_normalizada, filt_inv_normalizado
 
+# testing: borrar despues ----------------------------------
+sinesweep,filtinv = generate_sine_sweep_pair(2,200,2000,16000)
+convolucion = np.convolve(sinesweep,filtinv)
 
-# testing ---------------------------------------------------
-sinesweep,filtinv = generate_sine_sweep_pair(4,200,2000,16000)
-print(sinesweep)
+# sd.play(convolucion)
+# sd.wait() 
 
-sd.play(sinesweep) # reproducir
-sd.wait() 
+# sd.play(filtinv)
+# sd.wait() 
