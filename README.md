@@ -53,10 +53,10 @@ curl -X POST http://localhost:8000/api/v1/signals/pink-noise \
      -d '{"duration": 5, "sample_rate": 44100}' -o pink_noise.wav
 ```
 
-En Windows (PowerShell) conviene escribirlo en una sola linea y con `curl.exe`:
+En Windows (PowerShell) se puede usar `Invoke-WebRequest`:
 
 ```powershell
-curl.exe -X POST http://localhost:8000/api/v1/signals/pink-noise -H "Content-Type: application/json" -d "{\"duration\": 5, \"sample_rate\": 44100}" -o pink_noise.wav
+Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/pink-noise -ContentType "application/json" -Body '{"duration": 5, "sample_rate": 44100}' -OutFile pink_noise.wav
 ```
 
 Espectro del ruido rosa generado (10 s, 44100 Hz), analizado en Audacity:
