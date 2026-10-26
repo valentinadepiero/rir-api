@@ -8,6 +8,8 @@ resto de la API, los tests y el CI funcionan en maquinas sin placa de audio.
 
 import numpy as np
 
+PRE_ROLL_S = 0.5  # silencio inicial en segundos (latencia del driver de audio)
+
 
 def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.ndarray:
     """Reproduce una senal y graba simultaneamente (``sounddevice.playrec``).
@@ -41,7 +43,36 @@ def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.n
     ------
     RuntimeError
         Si no hay un dispositivo de audio disponible (con un mensaje informativo).
+    ValueError
+        Si record_duration no alcanza para el silencio inicial mas la senal.
     """
-    # Importar sounddevice ACA adentro (import perezoso), no al inicio del modulo:
-    # import sounddevice as sd
-    raise NotImplementedError("Implementar en Milestone 1")
+    import sounddevice as sd
+
+    senal = np.asarray(signal, dtype=np.float32)
+    es_mono = senal.ndim == 1
+    if es_mono:
+        senal = senal[:, np.newaxis]  # (N,) -> (N, 1)
+
+    n_total = int(record_duration * fs)
+    n_pre_roll = int(PRE_ROLL_S * fs)
+    n_senal, canales = senal.shape
+    if n_pre_roll + n_senal > n_total:
+        raise ValueError(
+            "record_duration es demasiado corta: no alcanza para el silencio "
+            "inicial mas la senal"
+        )
+
+    a_reproducir = np.zeros((n_total, canales), dtype=np.float32)
+    a_reproducir[n_pre_roll : n_pre_roll + n_senal] = senal
+
+    try:
+        grabacion = sd.playrec(
+            a_reproducir, samplerate=fs, channels=canales, blocking=True
+        )
+    except sd.PortAudioError as exc:
+        raise RuntimeError(
+            "No se pudo usar el dispositivo de audio. Verifica que haya un "
+            "microfono y un parlante conectados y disponibles."
+        ) from exc
+
+    return grabacion[:, 0] if es_mono else grabacion
