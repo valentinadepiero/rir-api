@@ -67,6 +67,7 @@ def generate_sine_sweep_pair(
     filt_inv = sine_sweep[::-1] * envolvente   # multiplica muestra a muestra el sine sweep invertido con la envolvente
 
     # NORMALIZAR --------------------------------------------
+    # divide la señal por la amplitud máxima de la señal
     sine_sweep_normalizada = sine_sweep / np.max(       # max devuelve "the maximum of an array or maximum along an axis."
         np.abs(sine_sweep))                             # abs devuelve "An ndarray containing the absolute value of each element in x"
                          
@@ -75,13 +76,3 @@ def generate_sine_sweep_pair(
         np.abs(filt_inv))    
 
     return sine_sweep_normalizada, filt_inv_normalizado
-
-# testing: borrar despues ----------------------------------
-sinesweep,filtinv = generate_sine_sweep_pair(2,200,2000,16000)
-convolucion = np.convolve(sinesweep,filtinv)
-
-# sd.play(convolucion)
-# sd.wait() 
-
-# sd.play(filtinv)
-# sd.wait() 
