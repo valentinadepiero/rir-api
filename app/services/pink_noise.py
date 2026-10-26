@@ -45,4 +45,22 @@ def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
        1/f noise. JASA 63(1), 258-263.
     .. [2] https://www.firstpr.com.au/dsp/pink-noise/
     """
-    raise NotImplementedError("Implementar en Milestone 1")
+    n = int(duration * fs)
+
+    # 1. Ruido blanco al azar
+    blanco = np.random.randn(n)
+
+    # 2. Pasar a frecuencia (FFT)
+    espectro = np.fft.rfft(blanco)
+    f = np.fft.rfftfreq(n, d=1 / fs)
+
+    # 3. Dividir por raíz de f (esto baja -3 dB por octava)
+    f[0] = f[1]  # evita dividir por cero
+    espectro = espectro / np.sqrt(f)
+
+    # 4. Volver al tiempo
+    rosa = np.fft.irfft(espectro, n=n)
+
+    # 5. Sacar la media y normalizar
+    rosa = rosa - np.mean(rosa)
+    return rosa / np.max(np.abs(rosa)) * 0.9
