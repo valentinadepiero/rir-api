@@ -56,6 +56,8 @@ curl -X POST http://localhost:8000/api/v1/signals/pink-noise \
      -d '{"duration": 5, "sample_rate": 44100}' -o pink_noise.wav
 ```
 
+![Curl](docs/m1/curl.JPG)
+
 En Windows (PowerShell) se puede usar `Invoke-WebRequest`:
 
 ```powershell
