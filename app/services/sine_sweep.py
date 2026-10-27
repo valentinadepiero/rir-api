@@ -3,7 +3,6 @@
 Milestone 1: Generacion de senales.
 """
 
-import sounddevice as sd     # testing: borrar despues
 import numpy as np
 import math as ma
 
