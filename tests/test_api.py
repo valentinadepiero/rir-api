@@ -24,10 +24,8 @@ from app.routers.audio_http import wav_response
 
 client = TestClient(app)
 
-xfail_m1 = pytest.mark.xfail(strict=False, reason="se implementa en M1")
 xfail_m2 = pytest.mark.xfail(strict=False, reason="se implementa en M2")
 xfail_m3 = pytest.mark.xfail(strict=False, reason="se implementa en M3")
-
 
 def _wav_en_memoria(signal: np.ndarray, fs: int) -> bytes:
     buffer = io.BytesIO()
@@ -84,7 +82,7 @@ def test_wav_response_roundtrip():
 # ── M1 ───────────────────────────────────────────────────────────────────────
 
 
-@xfail_m1
+
 def test_signals_pink_noise_endpoint():
     """/api/v1/signals/pink-noise genera y devuelve un WAV valido."""
     response = client.post(
@@ -96,7 +94,6 @@ def test_signals_pink_noise_endpoint():
     assert len(senal) == 44100
 
 
-@xfail_m1
 def test_signals_sine_sweep_endpoint():
     """/api/v1/signals/sine-sweep devuelve el sweep o, con inverse=True, su filtro inverso."""
     pedido = {"duration": 1.0, "start_freq": 20, "end_freq": 20000, "sample_rate": 44100}
@@ -110,7 +107,7 @@ def test_signals_sine_sweep_endpoint():
     assert not np.allclose(s[: len(k)], k[: len(s)])
 
 
-@xfail_m1
+
 def test_invalid_duration_returns_422():
     """Una duracion negativa la rechaza el schema (Pydantic) con 422."""
     response = client.post(
