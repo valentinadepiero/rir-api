@@ -46,6 +46,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
+
 ## Validacion M1: ruido rosa
 
 Ejemplo de uso del endpoint `POST /api/v1/signals/pink-noise` (con la API corriendo):
@@ -75,6 +76,24 @@ Espectro del ruido rosa generado (10 s, 44100 Hz), analizado en Audacity:
 
 Entre 100 Hz y 10 kHz hay unas 6,6 octavas y el nivel cae 20 dB, es decir
 unos -3 dB por octava, como corresponde al ruido rosa.
+
+## Validacion M1: sine sweep
+
+Espectrograma del sine sweep logaritmico (20 Hz - 20 kHz, 5 s, 44100 Hz). La energia
+sigue la curva teorica de frecuencia instantanea (linea blanca punteada), con un barrido
+monotono creciente:
+
+![Espectrograma del sweep](docs/m1/espectrograma_sweep.png)
+
+Convolucion del sweep con su filtro inverso. El resultado se parece a un impulso: el pico
+queda 89 dB por encima del resto de la señal (el test pide como minimo 60 dB).
+
+![Convolucion sweep e inverso](docs/m1/convolucion_sweep_inverso.png)
+
+| Verificacion                  | Resultado esperado | Resultado obtenido |
+| ----------------------------- | ------------------ | ------------------ |
+| Barrido de frecuencia         | monotono creciente | monotono creciente |
+| Relacion pico/resto (sweep * inverso) | mayor a 60 dB | 89,2 dB          |
 
 ## Branching strategy
 La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por cada issue que realicen commits a dev para unificarlas.
