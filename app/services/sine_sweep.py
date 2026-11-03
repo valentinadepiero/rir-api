@@ -50,32 +50,28 @@ def generate_sine_sweep_pair(
 
     # para cada una de las muestras, aplico la formula de sine sweep logaritmico
     sine_sweep = np.array(
-        [ma.sin(
-            (2 * ma.pi * f1 * duracion) *
-            (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1) /
-            ma.log(f2 / f1)
+        [
+            ma.sin(
+                (2 * ma.pi * f1 * duracion)
+                * (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1)
+                / ma.log(f2 / f1)
             )
-        for n in t]
+            for n in t
+        ]
     )
 
     # FILTRO INVERSO ---------------------------------------
     # para cada una de las muestras, aplico la formula de envolvente
-    envolvente = np.array(
-        [ma.exp(-n * ma.log(f2 / f1) / duracion)
-        for n in t]
-    )
-    
+    envolvente = np.array([ma.exp(-n * ma.log(f2 / f1) / duracion) for n in t])
+
     # multiplica muestra a muestra el sine sweep invertido con la envolvente
-    filt_inv = sine_sweep[::-1] * envolvente   
+    filt_inv = sine_sweep[::-1] * envolvente
     # NORMALIZAR --------------------------------------------
     # divide la señal por la amplitud máxima de la señal
     # max devuelve "the maximum of an array or maximum along an axis."
     # abs devuelve "An ndarray containing the absolute value of each element in x"
-    sine_sweep_normalizada = sine_sweep / np.max(       
-        np.abs(sine_sweep))                             
+    sine_sweep_normalizada = sine_sweep / np.max(np.abs(sine_sweep))
 
-
-    filt_inv_normalizado = filt_inv / np.max(
-        np.abs(filt_inv))
+    filt_inv_normalizado = filt_inv / np.max(np.abs(filt_inv))
 
     return sine_sweep_normalizada, filt_inv_normalizado
