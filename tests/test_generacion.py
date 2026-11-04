@@ -16,6 +16,7 @@ from app.services.audio_io import play_and_record
 from app.services.pink_noise import generate_pink_noise
 from app.services.sine_sweep import generate_sine_sweep_pair
 
+
 # --------------------------------------------------------------------------- #
 # Ruido rosa
 # --------------------------------------------------------------------------- #
