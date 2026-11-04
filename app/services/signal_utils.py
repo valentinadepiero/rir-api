@@ -3,13 +3,13 @@
 Milestone 2: Procesamiento de la respuesta al impulso.
 """
 
+import os
 from pathlib import Path
 
 import numpy as np
+import soundfile as sf
 from scipy import signal as sps
 
-import soundfile as sf
-import os
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
@@ -41,14 +41,14 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """
 
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
-        raise ValueError(f"Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
+        raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
     if not isinstance(path, str):
         raise TypeError("El archivo no es un archivo de audio.")
-    
+
     if not os.path.exists(path):
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
-    
+
     try:
         signal, fs = sf.read(path, dtype="float64")
     except Exception as e:
@@ -58,9 +58,9 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     max_abs = np.max(np.abs(signal))
 
     if signal.ndim not in (1, 2):
-        raise ValueError(f"Número de canales inválido.")
-    
-    if signal.ndim == 2: # por si el array es estereo
+        raise ValueError("Número de canales inválido.")
+
+    if signal.ndim == 2:  # por si el array es estereo
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
 
     elif signal.ndim != 1:
@@ -73,6 +73,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         signal = signal / max_abs
 
     return signal, int(fs)
+
 
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
