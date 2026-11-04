@@ -95,6 +95,55 @@ queda 89 dB por encima del resto de la señal (el test pide como minimo 60 dB).
 | Barrido de frecuencia         | monotono creciente | monotono creciente |
 | Relacion pico/resto (sweep * inverso) | mayor a 60 dB | 89,2 dB          |
 
+## Validacion M1: play and record
+
+`play_and_record` (`app/services/audio_io.py`) reproduce una senal y graba en simultaneo
+con `sounddevice.playrec`. Corre en la PC donde se mide, por eso no tiene endpoint. Agrega
+0,5 s de silencio inicial (pre-roll) y rellena con silencio hasta `record_duration`, para
+capturar la cola de reverberacion.
+
+Configuracion de audio usada en las pruebas reales:
+
+| Parametro                    | Valor                                          |
+| ---------------------------- | ---------------------------------------------- |
+| Interfaz                     | BEHRINGER UMC 202HD (entrada y salida)         |
+| API de audio                 | MME (Windows)                                  |
+| Canales                      | 1 (senal mono)                                 |
+| Frecuencia de muestreo       | 48000 Hz                                       |
+| Tamano de buffer (blocksize) | 0 (lo elige el sistema)                        |
+| Latencia pedida              | `high` en entrada y salida (valor por defecto) |
+
+Prueba con un tono de 1 kHz (2 s, grabacion de 4 s):
+
+![Prueba con tono](docs/m1/prueba_play_and_record.png)
+
+Prueba con el sine sweep real (20 Hz - 20 kHz, 5 s, grabacion de 8 s). Se genera el sweep
+con `generate_sine_sweep_pair`, se reproduce y graba con `play_and_record`, y la grabacion
+se convoluciona con el filtro inverso para obtener la respuesta al impulso. El espectrograma
+muestra la diagonal del sweep; el parlante casi no reproduce por debajo de unos 60 Hz.
+
+![Prueba con sweep](docs/m1/prueba_real_sweep.png)
+
+| Verificacion                                   | Resultado esperado                 | Resultado obtenido                    |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------- |
+| Largo de la grabacion                          | int(record_duration * fs)          | 384000 muestras (8 s x 48000 Hz)      |
+| Contenido de la grabacion (tono)               | frecuencia dominante = 1000 Hz     | 1000 Hz                               |
+| Pico de la respuesta al impulso (sweep)        | claro sobre el piso de ruido       | 78,9 dB sobre el ruido                |
+| Retardo del sistema                            | medible y similar entre pruebas    | 244 ms (sweep), unos 230 ms (tono)    |
+| Test automatico `test_play_and_record_shape`   | pasa                               | pasa                                  |
+
+Para repetir las pruebas, desde la raiz del repositorio en PowerShell:
+
+```powershell
+$env:PYTHONPATH = "."
+uv run python docs/m1/prueba_play_and_record.py
+uv run python docs/m1/prueba_real_sweep.py
+```
+
+Los scripts usan los dispositivos 1 (entrada) y 5 (salida) de `sd.query_devices()`: en otra
+PC hay que ajustar `sd.default.device`. Empezar con el volumen bajo, porque el sweep llega
+a 20 kHz.
+
 ## Branching strategy
 La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por cada issue que realicen commits a dev para unificarlas.
 
@@ -114,7 +163,7 @@ flowchart TB
         subgraph SC["app/schemas/"]
             SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
             SM2["signals.py<br/>SyntheticIRRequest"]
-            SM3["utils.py<br/>SmoothingRequest<br/>SchroederResponse<br/>LundebyResponse<br/><br/>responses.py<br/>BandAnalysisResponse"]
+            SM3["utils.py<br/>SmoothingRequest<br/>SchroederResponse<br/>LundebyResponse<br/><br/>responses.py<br/>HealthResponse<br/>BandAnalysisResponse"]
         end
         subgraph SV["app/services/"]
             PN["pink_noise.py<br/>generate_pink_noise"]
@@ -127,15 +176,31 @@ flowchart TB
     L["NumPy · SciPy · sounddevice"]
     L2["FastAPI "]
     L3["Pydantic"]
+    C --> RH
+    RH -->|"devuelve respuesta"| C
+
     C -->|"request HTTP + JSON"| RS
     C -->|"sube un WAV"| RM3
+    C --> RM2
     RS -->|"valida con"| SS
     RM2 -->|"valida con"| SM2
     RM3 -->|"valida con"| SM3
+
     RS -->|"llama a"| PN
+    PN --> RS
+    RS -->|"devuelve respuesta y audio"| C
+
     SM2 -->|"llama a"| VM2
+    VM2 --> RM2
+    RM2 -->|"devuelve respuesta y audio"| C
+
     SM3 -->|"llama a"| VM3
+    VM3 --> RM3
+    RM3 -->|"devuelve un JSON"| C
+
     RS -->|"llama a"| SW
+    SW --> RS
+
     PN --> L
     SW --> L
     IO --> L
@@ -143,8 +208,6 @@ flowchart TB
     RM2 --> L2
     RM3 --> L2
     SS --> L3
-    SM2 --> L3
-    SM3 --> L3
 ```
 
 ## Estructura del proyecto
