@@ -42,9 +42,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError(f"Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
-    if not isinstance(path, str):
-        raise TypeError("El archivo no es un archivo de audio.")
-    
     if not os.path.exists(path):
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
     
