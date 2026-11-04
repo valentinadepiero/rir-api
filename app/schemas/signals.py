@@ -1,6 +1,6 @@
 """Schemas de los endpoints de generacion de senales (Milestone 1)."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PositiveFloat
 
 class PinkNoiseRequest(BaseModel):
     """Pedido para generar ruido rosa."""
@@ -13,3 +13,8 @@ class SineSweepRequest(BaseModel):
     end_freq: float = Field(default=20000, ge=1, le=22050)
     sample_rate: int = Field(default=44100, ge=8000, le=192000)
     inverse: bool = False      
+
+class SyntheticIRRequest(BaseModel):
+    duration: float = Field(gt=0, le=10)
+    t60_values: dict[PositiveFloat, PositiveFloat] 
+    sample_rate: int = Field(default=44100, ge=8000, le=192000)
