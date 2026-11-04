@@ -128,6 +128,8 @@ flowchart TB
     L2["FastAPI "]
     L3["Pydantic"]
     C --> RH
+    RH -->|"devuelve respuesta"| C
+
     C -->|"request HTTP + JSON"| RS
     C -->|"sube un WAV"| RM3
     C --> RM2
