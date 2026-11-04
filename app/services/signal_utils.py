@@ -3,12 +3,14 @@
 Milestone 2: Procesamiento de la respuesta al impulso.
 """
 
+import os
 from pathlib import Path
 
 import numpy as np
 from app.services.filter import filter_single_band
 import soundfile as sf
-import os
+from scipy import signal as sps
+
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
@@ -40,11 +42,11 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """
 
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
-        raise ValueError(f"Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
+        raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
     if not os.path.exists(path):
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
-    
+
     try:
         signal, fs = sf.read(path, dtype="float64")
     except Exception as e:
@@ -54,9 +56,9 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     max_abs = np.max(np.abs(signal))
 
     if signal.ndim not in (1, 2):
-        raise ValueError(f"Número de canales inválido.")
-    
-    if signal.ndim == 2: # por si el array es estereo
+        raise ValueError("Número de canales inválido.")
+
+    if signal.ndim == 2:  # por si el array es estereo
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
 
     elif signal.ndim != 1:
@@ -69,6 +71,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         signal = signal / max_abs
 
     return signal, int(fs)
+
 
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
@@ -134,6 +137,11 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     return ri_sintetizada
 
 
+# Margen antes del pico: unas 256 muestras (~5 ms a 48 kHz). Evita que el filtrado
+# por bandas de M3 deforme el comienzo de la respuesta al impulso.
+PRE_PICO_MUESTRAS = 256
+
+
 def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
     """Obtiene la respuesta al impulso mediante deconvolucion de un sine sweep.
 
@@ -152,8 +160,25 @@ def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> n
     -------
     np.ndarray
         Respuesta al impulso estimada, normalizada.
+     Raises
+    ------
+    ValueError
+        Si las entradas no son arrays 1D no vacios o la grabacion no tiene senal.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    y = np.asarray(recording, dtype=np.float64)
+    x_inv = np.asarray(inverse_filter, dtype=np.float64)
+    if y.ndim != 1 or x_inv.ndim != 1 or y.size == 0 or x_inv.size == 0:
+        raise ValueError("recording e inverse_filter deben ser arrays 1D no vacios")
+
+    h = sps.fftconvolve(y, x_inv, mode="full")
+
+    i_pico = int(np.argmax(np.abs(h)))
+    pico = np.abs(h[i_pico])
+    if pico == 0:
+        raise ValueError("La grabacion no contiene senal")
+
+    inicio = max(i_pico - PRE_PICO_MUESTRAS, 0)
+    return h[inicio:] / pico
 
 
 def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
