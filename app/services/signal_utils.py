@@ -6,6 +6,7 @@ Milestone 2: Procesamiento de la respuesta al impulso.
 from pathlib import Path
 
 import numpy as np
+from scipy import signal as sps
 
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
@@ -64,6 +65,11 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     raise NotImplementedError("Implementar en Milestone 2")
 
 
+# Margen antes del pico: unas 256 muestras (~5 ms a 48 kHz). Evita que el filtrado
+# por bandas de M3 deforme el comienzo de la respuesta al impulso.
+PRE_PICO_MUESTRAS = 256
+
+
 def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
     """Obtiene la respuesta al impulso mediante deconvolucion de un sine sweep.
 
@@ -82,8 +88,25 @@ def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> n
     -------
     np.ndarray
         Respuesta al impulso estimada, normalizada.
+     Raises
+    ------
+    ValueError
+        Si las entradas no son arrays 1D no vacios o la grabacion no tiene senal.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    y = np.asarray(recording, dtype=np.float64)
+    x_inv = np.asarray(inverse_filter, dtype=np.float64)
+    if y.ndim != 1 or x_inv.ndim != 1 or y.size == 0 or x_inv.size == 0:
+        raise ValueError("recording e inverse_filter deben ser arrays 1D no vacios")
+
+    h = sps.fftconvolve(y, x_inv, mode="full")
+
+    i_pico = int(np.argmax(np.abs(h)))
+    pico = np.abs(h[i_pico])
+    if pico == 0:
+        raise ValueError("La grabacion no contiene senal")
+
+    inicio = max(i_pico - PRE_PICO_MUESTRAS, 0)
+    return h[inicio:] / pico
 
 
 def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
