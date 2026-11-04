@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 from scipy import signal as sps
 
+import soundfile as sf
+import os
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
@@ -37,8 +39,40 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         Si el archivo no es un audio valido o el formato no es soportado
         (con un mensaje claro que indique el archivo y el motivo).
     """
-    raise NotImplementedError("Implementar en Milestone 2")
 
+    if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
+        raise ValueError(f"Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
+
+    if not isinstance(path, str):
+        raise TypeError("El archivo no es un archivo de audio.")
+    
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
+    
+    try:
+        signal, fs = sf.read(path, dtype="float64")
+    except Exception as e:
+        raise RuntimeError(f"Error al leer el archivo: {e}") from e
+
+    signal = np.asarray(signal, dtype=np.float64)
+    max_abs = np.max(np.abs(signal))
+
+    if signal.ndim not in (1, 2):
+        raise ValueError(f"Número de canales inválido.")
+    
+    if signal.ndim == 2: # por si el array es estereo
+        signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
+
+    elif signal.ndim != 1:
+        raise ValueError("Formato de audio inválido.")
+
+    if signal.size == 0:
+        raise ValueError("El archivo de audio está vacío.")
+
+    if max_abs > 0:
+        signal = signal / max_abs
+
+    return signal, int(fs)
 
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
