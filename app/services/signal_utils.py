@@ -12,13 +12,13 @@ import soundfile as sf
 from scipy import signal as sps
 
 
-def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
-    """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
 
-    La senal se devuelve **mono**: si el archivo es estereo (o multicanal) se
-    promedian los canales. Se convierte a ``float64`` normalizada entre -1 y 1
-    independientemente de la profundidad de bits original (16, 24 o 32 bits).
-    Usar ``soundfile`` (o ``scipy.io.wavfile``).
+def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
+    """Carga un archivo de audio (al menos WAV y FLAC) y retorna señal y fs.
+
+    La señal se devuelve en mono: si el archivo es estéreo (o multicanal),
+    se promedian los canales. Se convierte a float64 utilizando la escala
+    de amplitud proporcionada por soundfile, sin normalización adicional.
 
     Parameters
     ----------
@@ -28,7 +28,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     Returns
     -------
     signal : np.ndarray
-        Senal de audio mono como array 1D ``float64`` en [-1, 1].
+        Señal de audio mono como array 1D float64.
     fs : int
         Frecuencia de muestreo del archivo en Hz.
 
@@ -37,38 +37,45 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     FileNotFoundError
         Si el archivo especificado no existe.
     ValueError
-        Si el archivo no es un audio valido o el formato no es soportado
+        Si el archivo no es un audio válido o el formato no es soportado
         (con un mensaje claro que indique el archivo y el motivo).
     """
+
+
+    path = Path(path)
+
+    if path.suffix.lower() not in (".wav", ".flac"):
+        raise ValueError(f"Formato no soportado: {path}")
+
+    if not path.exists():
 
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
     if not os.path.exists(path):
+
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
 
     try:
         signal, fs = sf.read(path, dtype="float64")
-    except Exception as e:
-        raise RuntimeError(f"Error al leer el archivo: {e}") from e
+    except sf.LibsndfileError as e:
+        raise ValueError(f"No se pudo leer el archivo de audio {path}: {e}") from e
 
     signal = np.asarray(signal, dtype=np.float64)
-    max_abs = np.max(np.abs(signal))
 
     if signal.ndim not in (1, 2):
+        raise ValueError("Numero de canales invalido.")
         raise ValueError("Número de canales inválido.")
 
     if signal.ndim == 2:  # por si el array es estereo
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
 
-    elif signal.ndim != 1:
-        raise ValueError("Formato de audio inválido.")
+
+    if signal.ndim == 2:
+        signal = signal.mean(axis=1)
 
     if signal.size == 0:
-        raise ValueError("El archivo de audio está vacío.")
-
-    if max_abs > 0:
-        signal = signal / max_abs
+        raise ValueError("El archivo de audio esta vacio.")
 
     return signal, int(fs)
 
