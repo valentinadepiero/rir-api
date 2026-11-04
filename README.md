@@ -163,7 +163,7 @@ flowchart TB
         subgraph SC["app/schemas/"]
             SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
             SM2["signals.py<br/>SyntheticIRRequest"]
-            SM3["utils.py<br/>SmoothingRequest<br/>SchroederResponse<br/>LundebyResponse<br/><br/>responses.py<br/>BandAnalysisResponse"]
+            SM3["utils.py<br/>SmoothingRequest<br/>SchroederResponse<br/>LundebyResponse<br/><br/>responses.py<br/>HealthResponse<br/>BandAnalysisResponse"]
         end
         subgraph SV["app/services/"]
             PN["pink_noise.py<br/>generate_pink_noise"]
@@ -176,15 +176,31 @@ flowchart TB
     L["NumPy · SciPy · sounddevice"]
     L2["FastAPI "]
     L3["Pydantic"]
+    C --> RH
+    RH -->|"devuelve respuesta"| C
+
     C -->|"request HTTP + JSON"| RS
     C -->|"sube un WAV"| RM3
+    C --> RM2
     RS -->|"valida con"| SS
     RM2 -->|"valida con"| SM2
     RM3 -->|"valida con"| SM3
+
     RS -->|"llama a"| PN
+    PN --> RS
+    RS -->|"devuelve respuesta y audio"| C
+
     SM2 -->|"llama a"| VM2
+    VM2 --> RM2
+    RM2 -->|"devuelve respuesta y audio"| C
+
     SM3 -->|"llama a"| VM3
+    VM3 --> RM3
+    RM3 -->|"devuelve un JSON"| C
+
     RS -->|"llama a"| SW
+    SW --> RS
+
     PN --> L
     SW --> L
     IO --> L
@@ -192,8 +208,6 @@ flowchart TB
     RM2 --> L2
     RM3 --> L2
     SS --> L3
-    SM2 --> L3
-    SM3 --> L3
 ```
 
 ## Estructura del proyecto
