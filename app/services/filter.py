@@ -4,6 +4,7 @@ Milestone 2: Procesamiento de la respuesta al impulso.
 """
 
 import numpy as np
+from scipy import signal as sps
 
 
 def filter_single_band(
@@ -36,5 +37,21 @@ def filter_single_band(
     -------
     np.ndarray
         Senal filtrada (array 1D, misma longitud que ``signal``).
+
+    Raises
+    ------
+    ValueError
+        Si el borde superior de la banda alcanza la frecuencia de Nyquist
+        (``fs / 2``), por ejemplo la banda de 16 kHz con ``fs = 44100``.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    f_inf = center_freq / np.sqrt(2)
+    f_sup = center_freq * np.sqrt(2)
+
+    if f_sup >= fs / 2:
+        raise ValueError(
+            f"La banda de {center_freq:g} Hz no entra con fs = {fs} Hz: "
+            f"su borde superior ({f_sup:.1f} Hz) llega a Nyquist ({fs / 2:g} Hz)."
+        )
+
+    sos = sps.butter(order, [f_inf, f_sup], btype="bandpass", fs=fs, output="sos")
+    return sps.sosfiltfilt(sos, signal)
