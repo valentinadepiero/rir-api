@@ -27,6 +27,7 @@ client = TestClient(app)
 xfail_m2 = pytest.mark.xfail(strict=False, reason="se implementa en M2")
 xfail_m3 = pytest.mark.xfail(strict=False, reason="se implementa en M3")
 
+
 def _wav_en_memoria(signal: np.ndarray, fs: int) -> bytes:
     buffer = io.BytesIO()
     sf.write(buffer, signal, fs, format="WAV", subtype="PCM_16")
@@ -82,7 +83,6 @@ def test_wav_response_roundtrip():
 # ── M1 ───────────────────────────────────────────────────────────────────────
 
 
-
 def test_signals_pink_noise_endpoint():
     """/api/v1/signals/pink-noise genera y devuelve un WAV valido."""
     response = client.post(
@@ -105,7 +105,6 @@ def test_signals_sine_sweep_endpoint():
     assert fs == 44100
     assert len(s) == 44100
     assert not np.allclose(s[: len(k)], k[: len(s)])
-
 
 
 def test_invalid_duration_returns_422():

@@ -3,8 +3,9 @@
 Milestone 1: Generacion de senales.
 """
 
-import numpy as np
 import math as ma
+
+import numpy as np
 
 
 def generate_sine_sweep_pair(
@@ -42,36 +43,35 @@ def generate_sine_sweep_pair(
     """
 
     # SINE SWEEP ------------------------------------------
-    # para generar el array de muestras: entre 0 y duración 
-    # ubico una cantidad de muestras (duracion * frecuencia de sampleo) 
+    # para generar el array de muestras: entre 0 y duración
+    # ubico una cantidad de muestras (duracion * frecuencia de sampleo)
     # separados por intervalos iguales.
     t = np.linspace(0, duracion, int(duracion * fs))
 
     # para cada una de las muestras, aplico la formula de sine sweep logaritmico
     sine_sweep = np.array(
-        [ma.sin(
-            (2 * ma.pi * f1 * duracion) *
-            (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1) /
-            ma.log(f2 / f1)
-            ) 
-        for n in t]
+        [
+            ma.sin(
+                (2 * ma.pi * f1 * duracion)
+                * (ma.exp(n * (ma.log(f2 / f1) / duracion)) - 1)
+                / ma.log(f2 / f1)
+            )
+            for n in t
+        ]
     )
 
     # FILTRO INVERSO ---------------------------------------
     # para cada una de las muestras, aplico la formula de envolvente
-    envolvente = np.array(
-        [ma.exp(-n * ma.log(f2 / f1) / duracion)
-        for n in t]
-    )
-    filt_inv = sine_sweep[::-1] * envolvente   # multiplica muestra a muestra el sine sweep invertido con la envolvente
+    envolvente = np.array([ma.exp(-n * ma.log(f2 / f1) / duracion) for n in t])
 
+    # multiplica muestra a muestra el sine sweep invertido con la envolvente
+    filt_inv = sine_sweep[::-1] * envolvente
     # NORMALIZAR --------------------------------------------
     # divide la señal por la amplitud máxima de la señal
-    sine_sweep_normalizada = sine_sweep / np.max(       # max devuelve "the maximum of an array or maximum along an axis."
-        np.abs(sine_sweep))                             # abs devuelve "An ndarray containing the absolute value of each element in x"
-                         
+    # max devuelve "the maximum of an array or maximum along an axis."
+    # abs devuelve "An ndarray containing the absolute value of each element in x"
+    sine_sweep_normalizada = sine_sweep / np.max(np.abs(sine_sweep))
 
-    filt_inv_normalizado = filt_inv / np.max(       
-        np.abs(filt_inv))    
+    filt_inv_normalizado = filt_inv / np.max(np.abs(filt_inv))
 
     return sine_sweep_normalizada, filt_inv_normalizado
