@@ -85,7 +85,7 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
         noise = np.random.rand(muestras)
         filtrado = filter_single_band(noise, fc, fs)
 
-        # normalización
+        # normalizado
         rms = np.sqrt(np.mean(filtrado**2))
         if rms > 0:
             filtrado /= rms
