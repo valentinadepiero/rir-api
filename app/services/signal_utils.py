@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 
 import numpy as np
+from app.services.filter import filter_single_band
 import soundfile as sf
 from scipy import signal as sps
 
@@ -42,9 +43,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
-
-    if not isinstance(path, str):
-        raise TypeError("El archivo no es un archivo de audio.")
 
     if not os.path.exists(path):
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
@@ -97,7 +95,46 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     np.ndarray
         Respuesta al impulso sintetizada (array 1D de ``int(duration * fs)`` muestras).
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+
+    if len(t60_values) == 0:
+        raise ValueError("No hay información de T60 por banda.")
+
+    if fs <= 0:
+        raise ValueError("La frecuencia de sampleo debe ser positiva.")
+
+    muestras = int(duration * fs)
+    t = np.arange(muestras) / fs
+    ri_sintetizada = np.zeros(muestras)
+
+    for fc, t60 in t60_values.items():
+        fc = int(fc)
+        t60 = float(t60)
+
+        if fc <= 0:
+            raise ValueError(f"La frecuencia no puede ser negativa ni nula.")
+
+        if t60 <= 0:
+            raise ValueError(f"El T60 no puede ser negativo ni nulo.")
+
+        noise = np.random.rand(muestras)
+        filtrado = filter_single_band(noise, fc, fs)
+
+        # normalizado
+        rms = np.sqrt(np.mean(filtrado**2))
+        if rms > 0:
+            filtrado /= rms
+
+        # envolvente
+        alfa = np.log(1000.0) / t60
+        envolv = np.exp(-alfa * t)
+        banda = filtrado * envolv
+
+        ri_sintetizada += banda
+
+    # normalizado
+    ri_sintetizada = ri_sintetizada / np.max(np.abs(ri_sintetizada)) 
+
+    return ri_sintetizada
 
 
 # Margen antes del pico: unas 256 muestras (~5 ms a 48 kHz). Evita que el filtrado
