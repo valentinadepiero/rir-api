@@ -6,6 +6,7 @@ Milestone 2: Procesamiento de la respuesta al impulso.
 from pathlib import Path
 
 import numpy as np
+from app.services.filter import filter_single_band
 
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
@@ -38,7 +39,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """
     raise NotImplementedError("Implementar en Milestone 2")
 
-
 def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
 
@@ -61,7 +61,46 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     np.ndarray
         Respuesta al impulso sintetizada (array 1D de ``int(duration * fs)`` muestras).
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+
+    if len(t60_values) == 0:
+        raise ValueError("No hay información de T60 por banda.")
+
+    if fs <= 0:
+        raise ValueError("La frecuencia de sampleo debe ser positiva.")
+
+    muestras = int(duration * fs)
+    t = np.arange(muestras) / fs
+    ri_sintetizada = np.zeros(muestras)
+
+    for fc, t60 in t60_values.items():
+        fc = int(fc)
+        t60 = float(t60)
+
+        if fc <= 0:
+            raise ValueError(f"La frecuencia no puede ser negativa ni nula.")
+
+        if t60 <= 0:
+            raise ValueError(f"El T60 no puede ser negativo ni nulo.")
+
+        noise = np.random.rand(muestras)
+        filtrado = filter_single_band(noise, fc, fs)
+
+        # normalización
+        rms = np.sqrt(np.mean(filtrado**2))
+        if rms > 0:
+            filtrado /= rms
+
+        # envolvente
+        alfa = np.log(1000.0) / t60
+        envolv = np.exp(-alfa * t)
+        banda = filtrado * envolv
+
+        ri_sintetizada += banda
+
+    # normalizado
+    ri_sintetizada = ri_sintetizada / np.max(np.abs(ri_sintetizada)) 
+
+    return ri_sintetizada
 
 
 def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
