@@ -7,9 +7,11 @@ import os
 from pathlib import Path
 
 import numpy as np
-from app.services.filter import filter_single_band
 import soundfile as sf
 from scipy import signal as sps
+
+from app.services.filter import filter_single_band
+
 
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna señal y fs.
@@ -104,7 +106,7 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     nyq = fs / 2
 
     for fc, t60 in t60_values.items():
-        fc = float(fc) 
+        fc = float(fc)
         t60 = float(t60)
 
         if fc <= 0:
@@ -134,8 +136,8 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
         envolv = np.exp(-alfa * t)
         banda = filtrado * envolv
 
-        ri_sintetizada += banda  
-        
+        ri_sintetizada += banda
+
     max_abs = np.max(np.abs(ri_sintetizada))
     if max_abs > 0:
         ri_sintetizada /= max_abs
