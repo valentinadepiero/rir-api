@@ -58,17 +58,14 @@ def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.n
     n_senal, canales = senal.shape
     if n_pre_roll + n_senal > n_total:
         raise ValueError(
-            "record_duration es demasiado corta: no alcanza para el silencio "
-            "inicial mas la senal"
+            "record_duration es demasiado corta: no alcanza para el silencio inicial mas la senal"
         )
 
     a_reproducir = np.zeros((n_total, canales), dtype=np.float32)
     a_reproducir[n_pre_roll : n_pre_roll + n_senal] = senal
 
     try:
-        grabacion = sd.playrec(
-            a_reproducir, samplerate=fs, channels=canales, blocking=True
-        )
+        grabacion = sd.playrec(a_reproducir, samplerate=fs, channels=canales, blocking=True)
     except sd.PortAudioError as exc:
         raise RuntimeError(
             "No se pudo usar el dispositivo de audio. Verifica que haya un "
