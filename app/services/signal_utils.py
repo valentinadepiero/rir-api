@@ -53,9 +53,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         signal, fs = sf.read(path, dtype="float64")
 
     except Exception as e:
-        raise ValueError(
-            f"El archivo no es un audio valido: {path}. Motivo: {e}"
-        ) from e
+        raise ValueError(f"El archivo no es un audio valido: {path}. Motivo: {e}") from e
 
     signal = np.asarray(signal, dtype=np.float64)
 
@@ -204,8 +202,6 @@ def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
         return np.full_like(amplitud, piso_db, dtype=float)
 
     amplitud_normalizada = amplitud / maximo
-    amplitud_normalizada = np.maximum(
-        amplitud_normalizada, 10 ** (piso_db / 20)
-    )
+    amplitud_normalizada = np.maximum(amplitud_normalizada, 10 ** (piso_db / 20))
 
     return 20 * np.log10(amplitud_normalizada)

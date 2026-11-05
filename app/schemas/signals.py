@@ -17,6 +17,7 @@ class SineSweepRequest(BaseModel):
     sample_rate: int = Field(default=44100, ge=8000, le=192000)
     inverse: bool = False
 
+
 class SyntheticIRRequest(BaseModel):
     duration: float = Field(gt=0, le=10)
     t60_values: dict[PositiveFloat, PositiveFloat]

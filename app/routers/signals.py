@@ -43,6 +43,7 @@ async def sine_sweep(req: SineSweepRequest):
     else:
         return wav_response(sweep, req.sample_rate, "sine_sweep.wav")
 
+
 @router.post("/synthetic-ir")
 async def synthetic_ir(req: SyntheticIRRequest):
     audio = generate_synthetic_ir(req.duration, req.t60_values, req.sample_rate)
