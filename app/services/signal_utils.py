@@ -41,9 +41,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     path = Path(path)
 
-    if path.suffix.lower() not in (".wav", ".flac"):
-        raise ValueError(f"Formato no soportado: {path}")
-
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
@@ -52,8 +49,11 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     try:
         signal, fs = sf.read(path, dtype="float64")
-    except sf.LibsndfileError as e:
-        raise ValueError(f"No se pudo leer el archivo de audio {path}: {e}") from e
+        
+    except Exception as e:
+        raise ValueError(
+            f"El archivo no es un audio valido: {path}. Motivo: {e}"
+        ) from e
 
     signal = np.asarray(signal, dtype=np.float64)
 
@@ -64,7 +64,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
 
     if signal.size == 0:
-        raise ValueError("El archivo de audio esta vacio.")
+        raise ValueError("El archivo de audio está vacío.")
 
     return signal, int(fs)
 
@@ -203,4 +203,17 @@ def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
     np.ndarray
         Senal en dB, normalizada a 0 dB en el maximo.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    amplitud = np.abs(signal)
+    maximo = np.max(amplitud)
+
+    piso_db = -120.0
+
+    if maximo == 0:
+        return np.full_like(amplitud, piso_db, dtype=float)
+
+    amplitud_normalizada = amplitud / maximo
+    amplitud_normalizada = np.maximum(
+        amplitud_normalizada, 10 ** (piso_db / 20)
+    )
+
+    return 20 * np.log10(amplitud_normalizada)
