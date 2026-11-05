@@ -50,10 +50,11 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     try:
         signal, fs = sf.read(path, dtype="float64")
     except Exception as e:
-        raise RuntimeError(f"Error al leer el archivo: {e}") from e
+        raise ValueError(
+            f"El archivo no es un audio valido: {path}. Motivo: {e}"
+        ) from e
 
     signal = np.asarray(signal, dtype=np.float64)
-    max_abs = np.max(np.abs(signal))
 
     if signal.ndim not in (1, 2):
         raise ValueError("Número de canales inválido.")
@@ -67,8 +68,6 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     if signal.size == 0:
         raise ValueError("El archivo de audio está vacío.")
 
-    if max_abs > 0:
-        signal = signal / max_abs
 
     return signal, int(fs)
 
@@ -117,7 +116,7 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
             raise ValueError(f"El T60 no puede ser negativo ni nulo.")
 
         noise = np.random.rand(muestras)
-        filtrado = filter_single_band(noise, fc, fs)
+        filtrado = filter_single_band(noise, fs, fc)
 
         # normalizado
         rms = np.sqrt(np.mean(filtrado**2))
@@ -197,4 +196,17 @@ def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
     np.ndarray
         Senal en dB, normalizada a 0 dB en el maximo.
     """
-    raise NotImplementedError("Implementar en Milestone 2")
+    amplitud = np.abs(signal)
+    maximo = np.max(amplitud)
+
+    piso_db = -120.0
+
+    if maximo == 0:
+        return np.full_like(amplitud, piso_db, dtype=float)
+
+    amplitud_normalizada = amplitud / maximo
+    amplitud_normalizada = np.maximum(
+        amplitud_normalizada, 10 ** (piso_db / 20)
+    )
+
+    return 20 * np.log10(amplitud_normalizada)
