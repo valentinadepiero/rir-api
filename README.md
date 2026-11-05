@@ -144,6 +144,81 @@ Los scripts usan los dispositivos 1 (entrada) y 5 (salida) de `sd.query_devices(
 PC hay que ajustar `sd.default.device`. Empezar con el volumen bajo, porque el sweep llega
 a 20 kHz.
 
+## Validación de M2: RI medidas reales
+
+Para validar el milestone se usaron dos respuestas al impulso medidas en
+recintos reales, una de T60 corto y otra de T60 largo. Con ellas se probó el
+flujo completo de los servicios de M2.
+
+### Respuestas al impulso usadas
+
+| Archivo | Recinto | Fuente | fs | Duración |
+|---|---|---|---|---|
+| `docs/m2/ri_corta_real.wav` | Habitación | MIT IR Survey  | 32000 Hz | 0,71 s |
+| `docs/m2/ri_larga_real.wav` | Habitación | MIT IR Survey  | 32000 Hz | 1,79 s |
+
+El sitio openarlib.net estaba fuera de línea al momento de la entrega, por eso
+se usó otra fuente. Los archivos se suben al repositorio (con `git add -f`,
+porque `.gitignore` ignora los `.wav`).
+
+### Procedimiento
+
+El script `docs/m2/validacion_ri.py` hace lo siguiente para cada RI:
+
+1. Carga el archivo con `load_audio`. Devuelve la señal en mono, en float64 y
+   con la fs del archivo, así que las distintas profundidades de bits no
+   requieren ningún tratamiento adicional.
+2. Grafica la forma de onda y el espectro de magnitud. El espectro se pasa a dB
+   con `logarithmic_scale_conversion`.
+3. Filtra la señal en bandas de octava con centros en 125, 250, 500, 1000,
+   2000 y 4000 Hz usando `filter_single_band`.
+4. Calcula el decaimiento de cada banda con la integral de Schroeder (energía
+   acumulada hacia atrás) y lo pasa a dB con `logarithmic_scale_conversion`.
+   Como esa función espera amplitud y la integral es energía, se le pasa la
+   raíz cuadrada de la energía, que equivale a `10·log10` de la energía.
+5. Estima el T60 de cada banda ajustando una recta a la curva entre -5 dB y
+   -25 dB (método T20) y extrapolando a una caída de 60 dB.
+
+### Cómo ejecutarlo
+
+```
+$env:PYTHONPATH="."; uv run python docs/m2/validacion_ri.py
+```
+
+(En bash: `PYTHONPATH=. uv run python docs/m2/validacion_ri.py`.) Genera
+`ri_corta_real.png` y `ri_larga_real.png` en `docs/m2/` e imprime el T60 por
+banda. Requiere `matplotlib`.
+
+### Resultados
+
+T60 estimado por banda de octava (en segundos, método T20):
+
+| Banda | RI corta | RI larga |
+|---|---|---|
+| 125 Hz | 0,39 | 1,27 |
+| 250 Hz | 0,61 | 1,40 |
+| 500 Hz | No salió | 1,64 |
+| 1000 Hz | 0,51 | 1,57 |
+| 2000 Hz | 0,48 | 1,12 |
+| 4000 Hz | 0,45 | 0,60 |
+
+![RI corta](docs/m2/ri_corta_real.png)
+
+![RI larga](docs/m2/ri_larga_real.png)
+
+En las bandas medias (500 Hz y 1 kHz) la RI larga tiene un T60 de entre una y
+media y tres veces el de la corta, lo que confirma el contraste buscado. En la
+RI larga el T60 baja en 2 kHz y 4 kHz, algo esperable por la mayor absorción
+del aire y de los materiales en frecuencias altas.
+
+### Limitaciones
+
+- Los valores de T60 son una estimación a partir de un tramo de 20 dB de caída,
+  no una medición normalizada. Dependen del nivel de ruido de fondo de cada
+  RI.
+- Las RI no se remuestrearon: ambas tienen 32 kHz y todas las bandas usadas
+  quedan por debajo de la frecuencia de Nyquist.
+  
 ## Branching strategy
 La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por cada issue que realicen commits a dev para unificarlas.
 
