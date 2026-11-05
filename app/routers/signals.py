@@ -3,11 +3,10 @@
 from fastapi import APIRouter, HTTPException, Response
 
 from app.routers.audio_http import wav_response
-from app.schemas.signals import PinkNoiseRequest, SineSweepRequest
+from app.schemas.signals import PinkNoiseRequest, SineSweepRequest, SyntheticIRRequest
 from app.services.pink_noise import generate_pink_noise
-from app.services.sine_sweep import generate_sine_sweep_pair
-from app.schemas.signals import SyntheticIRRequest
 from app.services.signal_utils import generate_synthetic_ir
+from app.services.sine_sweep import generate_sine_sweep_pair
 
 router = APIRouter()
 
@@ -30,7 +29,7 @@ async def pink_noise(req: PinkNoiseRequest) -> Response:
     return wav_response(audio, req.sample_rate, "pink_noise.wav")
 
 
-@router.post("/sine-sweep")          
+@router.post("/sine-sweep")
 async def sine_sweep(req: SineSweepRequest):
     if req.start_freq >= req.end_freq:
         raise HTTPException(status_code=400, detail="start_freq tiene que ser menor que end_freq")
@@ -43,8 +42,8 @@ async def sine_sweep(req: SineSweepRequest):
         return wav_response(inverse_filter, req.sample_rate, "filtro_inverso.wav")
     else:
         return wav_response(sweep, req.sample_rate, "sine_sweep.wav")
-    
-@router.post("/synthetic-ir")                      
+
+@router.post("/synthetic-ir")
 async def synthetic_ir(req: SyntheticIRRequest):
     audio = generate_synthetic_ir(req.duration, req.t60_values, req.sample_rate)
     return wav_response(audio, req.sample_rate, "pink_noise.wav")
