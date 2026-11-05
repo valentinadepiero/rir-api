@@ -49,7 +49,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     try:
         signal, fs = sf.read(path, dtype="float64")
-        
+
     except Exception as e:
         raise ValueError(
             f"El archivo no es un audio valido: {path}. Motivo: {e}"
@@ -101,10 +101,9 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     n_samples = int(np.ceil(duration * fs))
     t = np.arange(n_samples, dtype=np.float64) / fs
     ri_sintetizada = np.zeros(n_samples, dtype=np.float64)
-    nyq = fs / 2
 
     for fc, t60 in t60_values.items():
-        fc = float(fc) 
+        fc = float(fc)
         t60 = float(t60)
 
         if fc <= 0:
@@ -114,15 +113,6 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
             raise ValueError(f"T60 inválido: {t60}")
 
         noise = np.random.normal(loc=0.0, scale=1.0, size=n_samples)
-
-        f_inf = fc / np.sqrt(2)
-        f_sup = fc * np.sqrt(2)
-
-        if f_sup >= nyq:
-            f_sup = nyq * 0.999
-
-        if f_inf >= f_sup:
-            raise ValueError(f"Banda inválida para fc={fc}")
 
         filtrado = filter_single_band(noise, fs, fc)
 
@@ -134,8 +124,8 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
         envolv = np.exp(-alfa * t)
         banda = filtrado * envolv
 
-        ri_sintetizada += banda  
-        
+        ri_sintetizada += banda
+
     max_abs = np.max(np.abs(ri_sintetizada))
     if max_abs > 0:
         ri_sintetizada /= max_abs
