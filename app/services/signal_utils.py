@@ -11,8 +11,6 @@ from app.services.filter import filter_single_band
 import soundfile as sf
 from scipy import signal as sps
 
-
-
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna señal y fs.
 
@@ -41,19 +39,15 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
         (con un mensaje claro que indique el archivo y el motivo).
     """
 
-
     path = Path(path)
 
     if path.suffix.lower() not in (".wav", ".flac"):
         raise ValueError(f"Formato no soportado: {path}")
 
-    if not path.exists():
-
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
 
     if not os.path.exists(path):
-
         raise FileNotFoundError(f"El archivo no se encuentra en {path}.")
 
     try:
@@ -65,14 +59,9 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     if signal.ndim not in (1, 2):
         raise ValueError("Numero de canales invalido.")
-        raise ValueError("Número de canales inválido.")
 
     if signal.ndim == 2:  # por si el array es estereo
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
-
-
-    if signal.ndim == 2:
-        signal = signal.mean(axis=1)
 
     if signal.size == 0:
         raise ValueError("El archivo de audio esta vacio.")
@@ -104,42 +93,52 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     """
 
     if len(t60_values) == 0:
-        raise ValueError("No hay información de T60 por banda.")
+        raise ValueError("El T60 por banda no puede estar vacío.")
 
     if fs <= 0:
-        raise ValueError("La frecuencia de sampleo debe ser positiva.")
+        raise ValueError("La frecuencia debe ser positiva.")
 
-    muestras = int(duration * fs)
-    t = np.arange(muestras) / fs
-    ri_sintetizada = np.zeros(muestras)
+    n_samples = int(np.ceil(duration * fs))
+    t = np.arange(n_samples, dtype=np.float64) / fs
+    ri_sintetizada = np.zeros(n_samples, dtype=np.float64)
+    nyq = fs / 2
 
     for fc, t60 in t60_values.items():
-        fc = int(fc)
+        fc = float(fc) 
         t60 = float(t60)
 
         if fc <= 0:
-            raise ValueError(f"La frecuencia no puede ser negativa ni nula.")
+            raise ValueError(f"Frecuencia inválida: {fc}")
 
         if t60 <= 0:
-            raise ValueError(f"El T60 no puede ser negativo ni nulo.")
+            raise ValueError(f"T60 inválido: {t60}")
 
-        noise = np.random.rand(muestras)
-        filtrado = filter_single_band(noise, fc, fs)
+        noise = np.random.normal(loc=0.0, scale=1.0, size=n_samples)
 
-        # normalizado
+        f_inf = fc / np.sqrt(2)
+        f_sup = fc * np.sqrt(2)
+
+        if f_sup >= nyq:
+            f_sup = nyq * 0.999
+
+        if f_inf >= f_sup:
+            raise ValueError(f"Banda inválida para fc={fc}")
+
+        filtrado = filter_single_band(noise, fs, fc)
+
         rms = np.sqrt(np.mean(filtrado**2))
         if rms > 0:
             filtrado /= rms
 
-        # envolvente
         alfa = np.log(1000.0) / t60
         envolv = np.exp(-alfa * t)
         banda = filtrado * envolv
 
-        ri_sintetizada += banda
-
-    # normalizado
-    ri_sintetizada = ri_sintetizada / np.max(np.abs(ri_sintetizada)) 
+        ri_sintetizada += banda  
+        
+    max_abs = np.max(np.abs(ri_sintetizada))
+    if max_abs > 0:
+        ri_sintetizada /= max_abs
 
     return ri_sintetizada
 
