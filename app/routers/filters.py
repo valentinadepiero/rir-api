@@ -6,7 +6,8 @@ from app.services.signal_utils import load_audio
 
 router = APIRouter()
 
-@router.post("/single-band")                       
+
+@router.post("/single-band")                        # POST /api/v1/filters/single-band
 async def single_band(
     file: UploadFile = File(...),
     center_freq: float = Form(..., gt=0),

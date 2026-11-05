@@ -8,7 +8,11 @@ Uso:
 
 from fastapi import FastAPI
 
+
+from app.routers import filters, health, signals
+
 from app.routers import health, signals, filters
+
 from app.settings import settings
 
 app = FastAPI(
@@ -23,6 +27,7 @@ app.include_router(health.router)
 # Cada milestone expone lo que construye (ver el diagrama de arquitectura de M0):
 # M1: router de signals (pink-noise y sine-sweep)
 app.include_router(signals.router, prefix="/api/v1/signals", tags=["signals"])
+# TODO (M2): endpoint de synthetic-ir (en el mismo router de signals)
 # TODO (M2): endpoint de synthetic-ir (en el mismo router de signals) y router de filters
 app.include_router(filters.router, prefix="/api/v1/filters", tags=["filters"])
 # TODO (M3): routers de acoustics y utils

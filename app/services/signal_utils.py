@@ -11,14 +11,12 @@ from app.services.filter import filter_single_band
 import soundfile as sf
 from scipy import signal as sps
 
-
 def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
-    """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
+    """Carga un archivo de audio (al menos WAV y FLAC) y retorna señal y fs.
 
-    La senal se devuelve **mono**: si el archivo es estereo (o multicanal) se
-    promedian los canales. Se convierte a ``float64`` normalizada entre -1 y 1
-    independientemente de la profundidad de bits original (16, 24 o 32 bits).
-    Usar ``soundfile`` (o ``scipy.io.wavfile``).
+    La señal se devuelve en mono: si el archivo es estéreo (o multicanal),
+    se promedian los canales. Se convierte a float64 utilizando la escala
+    de amplitud proporcionada por soundfile, sin normalización adicional.
 
     Parameters
     ----------
@@ -28,7 +26,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     Returns
     -------
     signal : np.ndarray
-        Senal de audio mono como array 1D ``float64`` en [-1, 1].
+        Señal de audio mono como array 1D float64.
     fs : int
         Frecuencia de muestreo del archivo en Hz.
 
@@ -37,9 +35,11 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     FileNotFoundError
         Si el archivo especificado no existe.
     ValueError
-        Si el archivo no es un audio valido o el formato no es soportado
+        Si el archivo no es un audio válido o el formato no es soportado
         (con un mensaje claro que indique el archivo y el motivo).
     """
+
+    path = Path(path)
 
     if os.path.splitext(path)[1].lower() not in (".wav", ".flac"):
         raise ValueError("Formato no soportado. Sólo se aceptan archivos de audio WAV o FLAC.")
@@ -49,6 +49,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 
     try:
         signal, fs = sf.read(path, dtype="float64")
+        
     except Exception as e:
         raise ValueError(
             f"El archivo no es un audio valido: {path}. Motivo: {e}"
@@ -57,17 +58,13 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     signal = np.asarray(signal, dtype=np.float64)
 
     if signal.ndim not in (1, 2):
-        raise ValueError("Número de canales inválido.")
+        raise ValueError("Numero de canales invalido.")
 
     if signal.ndim == 2:  # por si el array es estereo
         signal = signal.mean(axis=1)  # si es estéreo, promedia ambos canales para obtener mono
 
-    elif signal.ndim != 1:
-        raise ValueError("Formato de audio inválido.")
-
     if signal.size == 0:
         raise ValueError("El archivo de audio está vacío.")
-
 
     return signal, int(fs)
 
@@ -96,42 +93,52 @@ def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: i
     """
 
     if len(t60_values) == 0:
-        raise ValueError("No hay información de T60 por banda.")
+        raise ValueError("El T60 por banda no puede estar vacío.")
 
     if fs <= 0:
-        raise ValueError("La frecuencia de sampleo debe ser positiva.")
+        raise ValueError("La frecuencia debe ser positiva.")
 
-    muestras = int(duration * fs)
-    t = np.arange(muestras) / fs
-    ri_sintetizada = np.zeros(muestras)
+    n_samples = int(np.ceil(duration * fs))
+    t = np.arange(n_samples, dtype=np.float64) / fs
+    ri_sintetizada = np.zeros(n_samples, dtype=np.float64)
+    nyq = fs / 2
 
     for fc, t60 in t60_values.items():
-        fc = int(fc)
+        fc = float(fc) 
         t60 = float(t60)
 
         if fc <= 0:
-            raise ValueError(f"La frecuencia no puede ser negativa ni nula.")
+            raise ValueError(f"Frecuencia inválida: {fc}")
 
         if t60 <= 0:
-            raise ValueError(f"El T60 no puede ser negativo ni nulo.")
+            raise ValueError(f"T60 inválido: {t60}")
 
-        noise = np.random.rand(muestras)
+        noise = np.random.normal(loc=0.0, scale=1.0, size=n_samples)
+
+        f_inf = fc / np.sqrt(2)
+        f_sup = fc * np.sqrt(2)
+
+        if f_sup >= nyq:
+            f_sup = nyq * 0.999
+
+        if f_inf >= f_sup:
+            raise ValueError(f"Banda inválida para fc={fc}")
+
         filtrado = filter_single_band(noise, fs, fc)
 
-        # normalizado
         rms = np.sqrt(np.mean(filtrado**2))
         if rms > 0:
             filtrado /= rms
 
-        # envolvente
         alfa = np.log(1000.0) / t60
         envolv = np.exp(-alfa * t)
         banda = filtrado * envolv
 
-        ri_sintetizada += banda
-
-    # normalizado
-    ri_sintetizada = ri_sintetizada / np.max(np.abs(ri_sintetizada)) 
+        ri_sintetizada += banda  
+        
+    max_abs = np.max(np.abs(ri_sintetizada))
+    if max_abs > 0:
+        ri_sintetizada /= max_abs
 
     return ri_sintetizada
 
