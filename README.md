@@ -223,7 +223,7 @@ T60 estimado por banda de octava (en segundos, método T20):
 |---|---|---|
 | 125 Hz | 0,39 | 1,27 |
 | 250 Hz | 0,61 | 1,40 |
-| 500 Hz | No salió | 1,64 |
+| 500 Hz | 0,49 | 1,64 |
 | 1000 Hz | 0,51 | 1,57 |
 | 2000 Hz | 0,48 | 1,12 |
 | 4000 Hz | 0,45 | 0,60 |
@@ -291,11 +291,11 @@ flowchart TB
     PN --> RS
     RS -->|"devuelve respuesta y audio"| C
 
-    SM2 -->|"llama a"| VM2
+    RS -->|"llama a"| VM2
     VM2 --> RM2
     RM2 -->|"devuelve respuesta y audio"| C
 
-    SM3 -->|"llama a"| VM3
+    RM3 -->|"llama a"| VM3
     VM3 --> RM3
     RM3 -->|"devuelve un JSON"| C
 
@@ -307,8 +307,6 @@ flowchart TB
     IO --> L
     RS --> L2
     RM2 --> L2
-    RM3 --> L2
-    SS --> L3
 ```
 
 ## Estructura del proyecto
