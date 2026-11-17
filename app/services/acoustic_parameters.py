@@ -5,7 +5,6 @@ Milestone 3: Producto final.
 
 import numpy as np
 
-
 def apply_smoothing(
     signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
 ) -> np.ndarray:
@@ -66,8 +65,21 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
        time." JASA 37(3), 409-412.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
 
+    ir = np.asarray(ir, dtype=float)
+
+    if ir.size == 0:
+        raise ValueError("La RI no puede estar vacía.")
+
+    eps = np.finfo(float).eps
+
+    energia = ir**2
+
+    reverse_integral = np.cumsum(energia[::-1])[::-1]
+
+    curva_db = 10 * np.log10(reverse_integral / reverse_integral[0] + eps)
+
+    return curva_db
 
 def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
     """Calcula la regresion lineal por minimos cuadrados.
