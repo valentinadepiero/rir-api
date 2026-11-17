@@ -13,12 +13,10 @@ def apply_smoothing(
 
     - ``method='hilbert'`` (recomendado): envolvente de Hilbert,
       ``np.abs(scipy.signal.hilbert(signal))``. Ignora ``window_ms``.
-    - ``method='moving_average'``: media movil de ``window_ms`` milisegundos
-      (``int(window_ms * fs / 1000)`` muestras, al menos 1). Para que la salida
-      quede en amplitud (comparable con Hilbert), devolver la raiz de la media
-      movil de ``signal**2`` (envolvente RMS) o, alternativamente, la media
-      movil de ``|signal|``. Documentar cual se eligio.
-
+    - ``method='moving_average'``: envolvente RMS calculada mediante la raiz
+      cuadrada de la media movil de ``signal**2``, utilizando la muestra actual
+      y las anteriores. Se utiliza padding de borde al inicio para conservar
+      la longitud de la señal.
     Parameters
     ----------
     signal : np.ndarray
@@ -41,7 +39,54 @@ def apply_smoothing(
         Si ``method`` no es ``'hilbert'`` ni ``'moving_average'``, o si
         ``window_ms`` no es positivo.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+    if not isinstance(signal, np.ndarray):
+        raise ValueError("signal debe ser un array de NumPy")
+
+    if signal.ndim != 1 or signal.size == 0:
+        raise ValueError("signal debe ser un array unidimensional no vacio")
+
+    if not np.issubdtype(signal.dtype, np.number) or np.iscomplexobj(signal):
+        raise ValueError("signal debe contener valores numericos reales")
+
+    if not np.all(np.isfinite(signal)):
+        raise ValueError("signal debe contener valores finitos")
+
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(
+        fs, (int, np.integer)
+    ) or fs <= 0:
+        raise ValueError("fs debe ser un entero positivo")
+
+    if not isinstance(method, str) or method not in (
+        "hilbert",
+        "moving_average",
+    ):
+        raise ValueError("method debe ser 'hilbert' o 'moving_average'")
+
+    if method == "hilbert":
+        from scipy.signal import hilbert
+
+        return np.abs(hilbert(signal))
+
+    if (
+        isinstance(window_ms, (bool, np.bool_))
+        or not isinstance(window_ms, (int, float, np.integer, np.floating))
+        or not np.isfinite(window_ms)
+        or window_ms <= 0
+    ):
+        raise ValueError("window_ms debe ser un numero positivo y finito")
+
+    window_samples = max(1, int(window_ms * fs / 1000))
+
+    squared_signal = signal.astype(float) ** 2
+    kernel = np.ones(window_samples) / window_samples
+
+    padded_signal = np.pad(
+        squared_signal, (window_samples - 1, 0), mode="edge"
+    )
+
+    squared_envelope = np.convolve(padded_signal, kernel, mode="valid")
+    return np.sqrt(np.maximum(squared_envelope, 0.0))
+
 
 
 def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
