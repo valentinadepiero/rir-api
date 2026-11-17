@@ -5,6 +5,7 @@ Milestone 3: Producto final.
 
 import numpy as np
 
+
 def apply_smoothing(
     signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
 ) -> np.ndarray:
@@ -50,9 +51,7 @@ def apply_smoothing(
     if not np.all(np.isfinite(signal)):
         raise ValueError("signal debe contener valores finitos")
 
-    if isinstance(fs, (bool, np.bool_)) or not isinstance(
-        fs, (int, np.integer)
-    ) or fs <= 0:
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(fs, (int, np.integer)) or fs <= 0:
         raise ValueError("fs debe ser un entero positivo")
 
     if not isinstance(method, str) or method not in (
@@ -79,13 +78,10 @@ def apply_smoothing(
     squared_signal = signal.astype(float) ** 2
     kernel = np.ones(window_samples) / window_samples
 
-    padded_signal = np.pad(
-        squared_signal, (window_samples - 1, 0), mode="edge"
-    )
+    padded_signal = np.pad(squared_signal, (window_samples - 1, 0), mode="edge")
 
     squared_envelope = np.convolve(padded_signal, kernel, mode="valid")
     return np.sqrt(np.maximum(squared_envelope, 0.0))
-
 
 
 def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
@@ -125,6 +121,7 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     curva_db = 10 * np.log10(reverse_integral / reverse_integral[0] + eps)
 
     return curva_db
+
 
 def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
     """Calcula la regresion lineal por minimos cuadrados.
@@ -179,6 +176,7 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     r2 = 1.0 if ss_tot == 0 else 1 - ss_res / ss_tot
 
     return float(m), float(b), float(r2)
+
 
 def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
     """Calcula los parametros acusticos ISO 3382 por banda de octava.
