@@ -47,7 +47,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Validacion M1: ruido rosa
+## Validaciones CURL
 
 Ejemplo de uso del endpoint `POST /api/v1/signals/pink-noise` (con la API corriendo):
 
@@ -57,13 +57,31 @@ curl -X POST http://localhost:8000/api/v1/signals/pink-noise \
      -d '{"duration": 5, "sample_rate": 44100}' -o pink_noise.wav
 ```
 
-![Curl](docs/m1/curl.JPG)
-
 En Windows (PowerShell) se puede usar `Invoke-WebRequest`:
 
 ```powershell
 Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/pink-noise -ContentType "application/json" -Body '{"duration": 5, "sample_rate": 44100}' -OutFile pink_noise.wav
 ```
+
+![Curl](docs/m1/curl.JPG)
+
+
+```bash
+curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
+     -H "Content-Type: application/json" \
+     -d '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' -o ri_sintetica.wav
+```
+
+En Windows (PowerShell) se puede usar `Invoke-WebRequest`:
+
+```powershell
+Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/synthetic-ir -ContentType "application/json" -Body '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' -OutFile ri_sintetica.wav
+```
+
+![Curl](docs/m2/curl2.png)
+
+
+## Validacion M1: ruido rosa
 
 Espectro del ruido rosa generado (10 s, 44100 Hz), analizado en Audacity:
 
