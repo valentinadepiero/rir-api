@@ -48,7 +48,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - ReDoc: `http://localhost:8000/redoc`
 
 ## Validaciones CURL
-# Ruido rosa
+### ● Ruido rosa
 
 Ejemplo de uso del endpoint `POST /api/v1/signals/pink-noise` (con la API corriendo):
 
@@ -66,7 +66,7 @@ Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/pink-no
 
 ![Curl](docs/m1/curl.JPG)
 
-# RI sintética
+### ● RI sintética
 Bash:
 
 ```bash
