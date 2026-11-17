@@ -148,8 +148,37 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     r2 : float
         Coeficiente de determinacion R^2.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
 
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    if len(x) != len(y):
+        raise ValueError("x e y deben tener el mismo largo.")
+    if len(x) < 2:
+        raise ValueError("Hacen falta al menos 2 puntos.")
+
+    n = len(x)
+    sum_x = np.sum(x)
+    sum_y = np.sum(y)
+    sum_xy = np.sum(x * y)
+    sum_x2 = np.sum(x**2)
+
+    numerador = n * sum_xy - sum_x * sum_y
+    denominador = n * sum_x2 - sum_x**2
+
+    if denominador == 0:
+        raise ValueError("Todos los valores de x son iguales.")
+
+    m = numerador / denominador
+    b = (sum_y - m * sum_x) / n
+
+    y_estimada = m * x + b
+    ss_res = np.sum((y - y_estimada) ** 2)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+    r2 = 1.0 if ss_tot == 0 else 1 - ss_res / ss_tot
+
+    return float(m), float(b), float(r2)
 
 def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
     """Calcula los parametros acusticos ISO 3382 por banda de octava.
