@@ -5,6 +5,7 @@ Milestone 3: Producto final.
 
 import numpy as np
 
+
 def apply_smoothing(
     signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
 ) -> np.ndarray:
@@ -50,9 +51,7 @@ def apply_smoothing(
     if not np.all(np.isfinite(signal)):
         raise ValueError("signal debe contener valores finitos")
 
-    if isinstance(fs, (bool, np.bool_)) or not isinstance(
-        fs, (int, np.integer)
-    ) or fs <= 0:
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(fs, (int, np.integer)) or fs <= 0:
         raise ValueError("fs debe ser un entero positivo")
 
     if not isinstance(method, str) or method not in (
@@ -79,13 +78,10 @@ def apply_smoothing(
     squared_signal = signal.astype(float) ** 2
     kernel = np.ones(window_samples) / window_samples
 
-    padded_signal = np.pad(
-        squared_signal, (window_samples - 1, 0), mode="edge"
-    )
+    padded_signal = np.pad(squared_signal, (window_samples - 1, 0), mode="edge")
 
     squared_envelope = np.convolve(padded_signal, kernel, mode="valid")
     return np.sqrt(np.maximum(squared_envelope, 0.0))
-
 
 
 def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
@@ -126,6 +122,7 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
 
     return curva_db
 
+
 def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
     """Calcula la regresion lineal por minimos cuadrados.
 
@@ -148,7 +145,37 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     r2 : float
         Coeficiente de determinacion R^2.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    if len(x) != len(y):
+        raise ValueError("x e y deben tener el mismo largo.")
+    if len(x) < 2:
+        raise ValueError("Hacen falta al menos 2 puntos.")
+
+    n = len(x)
+    sum_x = np.sum(x)
+    sum_y = np.sum(y)
+    sum_xy = np.sum(x * y)
+    sum_x2 = np.sum(x**2)
+
+    numerador = n * sum_xy - sum_x * sum_y
+    denominador = n * sum_x2 - sum_x**2
+
+    if denominador == 0:
+        raise ValueError("Todos los valores de x son iguales.")
+
+    m = numerador / denominador
+    b = (sum_y - m * sum_x) / n
+
+    y_estimada = m * x + b
+    ss_res = np.sum((y - y_estimada) ** 2)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+    r2 = 1.0 if ss_tot == 0 else 1 - ss_res / ss_tot
+
+    return float(m), float(b), float(r2)
 
 
 def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
