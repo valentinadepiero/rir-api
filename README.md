@@ -68,6 +68,8 @@ Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/pink-no
 
 ### • RI sintética
 
+Uso del endpoint `POST /api/v1/signals/synthetic-ir`:
+
 ```bash
 curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
      -H "Content-Type: application/json" \
@@ -77,6 +79,8 @@ curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
 ![Curl](docs/m2/curl2.png)
 
 ### • Filtro por banda
+
+Uso del endpoint `POST /api/v1/filters/single-band`:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/filters/single-band \
