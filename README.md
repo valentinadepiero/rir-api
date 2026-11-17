@@ -48,6 +48,7 @@ La API queda disponible en `http://localhost:8000`. Documentacion interactiva:
 - ReDoc: `http://localhost:8000/redoc`
 
 ## Validaciones CURL
+# Ruido rosa
 
 Ejemplo de uso del endpoint `POST /api/v1/signals/pink-noise` (con la API corriendo):
 
@@ -65,6 +66,8 @@ Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/pink-no
 
 ![Curl](docs/m1/curl.JPG)
 
+# RI sintética
+Bash:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
@@ -72,8 +75,7 @@ curl -X POST http://localhost:8000/api/v1/signals/synthetic-ir \
      -d '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' -o ri_sintetica.wav
 ```
 
-En Windows (PowerShell) se puede usar `Invoke-WebRequest`:
-
+Powershell:
 ```powershell
 Invoke-WebRequest -Method Post -Uri http://localhost:8000/api/v1/signals/synthetic-ir -ContentType "application/json" -Body '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' -OutFile ri_sintetica.wav
 ```
