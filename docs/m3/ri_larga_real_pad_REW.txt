@@ -1,0 +1,24 @@
+RT60 data saved by REW V5.31.3
+Source: C:\Users\Alexis Nievas\Desktop\Señales y Sistemas\Señales - Practica\rir-api\docs\m3\ri_larga_real_pad.wav
+Dated: 17/11/2026 22:48:59
+Measurement: ri_larga_real_pad
+Sweep level: -12,0 dBFS
+Response measured over: 0,5 to 16.000,0 Hz
+Peak value: 1.0 at index 4282
+Response length: 65536 samples
+Sample interval: 3.125E-5 seconds
+Start time: -0.1338125 seconds
+
+Format is freq (Hz), BW (octaves), EDT (s), r, T20 (s), r, T30 (s), r, Topt (s), r, ToptStart (dB), ToptEnd (dB), T60M (s), reverse/forward/zero phase filtered, C50 (dB), C80 (dB), D50 (%), TS (s)
+
+63 1/1 0.803 -0.980 1.609 -0.993 1.686 -0.997 1.682 -0.998 -9.000 -58.000 0.000 Forward 3.14 5.89 67.3 0.074
+125 1/1 1.140 -0.996 1.428 -0.999 1.549 -0.998 1.466 -0.999 -5.000 -60.000 0.000 Forward -2.18 2.35 37.7 0.101
+250 1/1 1.496 -0.990 1.519 -0.996 1.605 -0.997 1.516 -0.999 -5.000 -60.000 0.000 Forward -1.80 1.19 39.8 0.102
+500 1/1 1.602 -0.997 1.714 -0.995 1.766 -0.998 1.609 -0.998 -5.000 -56.000 0.000 Forward -2.08 -0.21 38.3 0.115
+1000 1/1 1.516 -0.998 1.581 -0.996 1.633 -0.998 1.492 -0.999 -5.000 -60.000 0.000 Forward -2.53 0.33 35.8 0.107
+2000 1/1 1.135 -0.999 1.177 -0.999 1.308 -0.997 1.328 -0.999 -5.000 -60.000 0.000 Forward 0.38 2.81 52.2 0.074
+4000 1/1 0.535 -0.997 0.638 -0.998 0.710 -0.997 0.599 -0.999 -5.000 -20.000 0.000 Forward 5.22 9.44 76.9 0.033
+8000 1/1 0.408 -0.996 0.480 -0.999 0.526 -0.998 0.487 -0.999 -5.000 -28.000 0.000 Forward 7.59 12.01 85.2 0.024
+
+full 1/1 1.395 -0.999 1.533 -0.995 1.642 -0.998 1.533 -0.999 -5.000 -60.000 0.000 Forward -0.41 2.06 47.7 0.087
+
