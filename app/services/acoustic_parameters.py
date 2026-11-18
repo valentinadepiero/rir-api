@@ -13,12 +13,10 @@ def apply_smoothing(
 
     - ``method='hilbert'`` (recomendado): envolvente de Hilbert,
       ``np.abs(scipy.signal.hilbert(signal))``. Ignora ``window_ms``.
-    - ``method='moving_average'``: media movil de ``window_ms`` milisegundos
-      (``int(window_ms * fs / 1000)`` muestras, al menos 1). Para que la salida
-      quede en amplitud (comparable con Hilbert), devolver la raiz de la media
-      movil de ``signal**2`` (envolvente RMS) o, alternativamente, la media
-      movil de ``|signal|``. Documentar cual se eligio.
-
+    - ``method='moving_average'``: envolvente RMS calculada mediante la raiz
+      cuadrada de la media movil de ``signal**2``, utilizando la muestra actual
+      y las anteriores. Se utiliza padding de borde al inicio para conservar
+      la longitud de la señal.
     Parameters
     ----------
     signal : np.ndarray
@@ -41,7 +39,49 @@ def apply_smoothing(
         Si ``method`` no es ``'hilbert'`` ni ``'moving_average'``, o si
         ``window_ms`` no es positivo.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+    if not isinstance(signal, np.ndarray):
+        raise ValueError("signal debe ser un array de NumPy")
+
+    if signal.ndim != 1 or signal.size == 0:
+        raise ValueError("signal debe ser un array unidimensional no vacio")
+
+    if not np.issubdtype(signal.dtype, np.number) or np.iscomplexobj(signal):
+        raise ValueError("signal debe contener valores numericos reales")
+
+    if not np.all(np.isfinite(signal)):
+        raise ValueError("signal debe contener valores finitos")
+
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(fs, (int, np.integer)) or fs <= 0:
+        raise ValueError("fs debe ser un entero positivo")
+
+    if not isinstance(method, str) or method not in (
+        "hilbert",
+        "moving_average",
+    ):
+        raise ValueError("method debe ser 'hilbert' o 'moving_average'")
+
+    if method == "hilbert":
+        from scipy.signal import hilbert
+
+        return np.abs(hilbert(signal))
+
+    if (
+        isinstance(window_ms, (bool, np.bool_))
+        or not isinstance(window_ms, (int, float, np.integer, np.floating))
+        or not np.isfinite(window_ms)
+        or window_ms <= 0
+    ):
+        raise ValueError("window_ms debe ser un numero positivo y finito")
+
+    window_samples = max(1, int(window_ms * fs / 1000))
+
+    squared_signal = signal.astype(float) ** 2
+    kernel = np.ones(window_samples) / window_samples
+
+    padded_signal = np.pad(squared_signal, (window_samples - 1, 0), mode="edge")
+
+    squared_envelope = np.convolve(padded_signal, kernel, mode="valid")
+    return np.sqrt(np.maximum(squared_envelope, 0.0))
 
 
 def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
@@ -66,7 +106,21 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
        time." JASA 37(3), 409-412.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+    
+    ir = np.asarray(ir, dtype=float)
+
+    if ir.size == 0:
+        raise ValueError("La RI no puede estar vacía.")
+
+    eps = np.finfo(float).eps
+
+    energia = ir**2
+
+    reverse_integral = np.cumsum(energia[::-1])[::-1]
+
+    curva_db = 10 * np.log10(reverse_integral / reverse_integral[0] + eps)
+
+    return curva_db
 
 
 def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
@@ -91,7 +145,37 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     r2 : float
         Coeficiente de determinacion R^2.
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    if len(x) != len(y):
+        raise ValueError("x e y deben tener el mismo largo.")
+    if len(x) < 2:
+        raise ValueError("Hacen falta al menos 2 puntos.")
+
+    n = len(x)
+    sum_x = np.sum(x)
+    sum_y = np.sum(y)
+    sum_xy = np.sum(x * y)
+    sum_x2 = np.sum(x**2)
+
+    numerador = n * sum_xy - sum_x * sum_y
+    denominador = n * sum_x2 - sum_x**2
+
+    if denominador == 0:
+        raise ValueError("Todos los valores de x son iguales.")
+
+    m = numerador / denominador
+    b = (sum_y - m * sum_x) / n
+
+    y_estimada = m * x + b
+    ss_res = np.sum((y - y_estimada) ** 2)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+    r2 = 1.0 if ss_tot == 0 else 1 - ss_res / ss_tot
+
+    return float(m), float(b), float(r2)
 
 
 def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
@@ -119,7 +203,86 @@ def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[floa
     .. [1] ISO 3382-1:2009. "Acoustics -- Measurement of room acoustic
        parameters -- Part 1: Performance spaces."
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+    # Validar la señal de entrada.
+    if not isinstance(ir, np.ndarray):
+        raise ValueError("ir debe ser un array de NumPy")
+
+    if ir.ndim != 1 or ir.size == 0:
+        raise ValueError("ir debe ser un array unidimensional no vacio")
+
+    if not np.issubdtype(ir.dtype, np.number) or np.iscomplexobj(ir):
+        raise ValueError("ir debe contener valores numericos reales")
+
+    if not np.all(np.isfinite(ir)):
+        raise ValueError("ir debe contener valores finitos")
+
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(fs, (int, np.integer)) or fs <= 0:
+        raise ValueError("fs debe ser un entero positivo")
+
+    from app.services.filter import filter_single_band
+
+    frecuencias = [125, 250, 500, 1000, 2000, 4000]
+    tramos = {
+        "EDT": (0, -10),
+        "T10": (-5, -15),
+        "T20": (-5, -25),
+        "T30": (-5, -35),
+    }
+
+    parametros = {nombre: {} for nombre in ("EDT", "T10", "T20", "T30", "D50", "C80")}
+
+    ir = ir.astype(np.float64)
+    tiempo = np.arange(len(ir)) / fs
+
+    for fc in frecuencias:
+        if fc * np.sqrt(2) >= fs / 2:
+            continue
+
+        filtrada = filter_single_band(ir, fs, fc)
+        edc = apply_schroeder_integral(filtrada)
+
+        # Calcular EDT, T10, T20 y T30.
+        for nombre, (nivel_superior, nivel_inferior) in tramos.items():
+            mascara = (edc <= nivel_superior) & (edc >= nivel_inferior)
+
+            if np.count_nonzero(mascara) < 2:
+                parametros[nombre][float(fc)] = None
+                continue
+
+            pendiente, _, _ = linear_regression(tiempo[mascara], edc[mascara])
+
+            if pendiente >= 0 or not np.isfinite(pendiente):
+                parametros[nombre][float(fc)] = None
+            else:
+                parametros[nombre][float(fc)] = -60.0 / pendiente
+
+        # Calcular D50 y C80 desde el pico de la señal filtrada.
+        energia = filtrada**2
+        pico = int(np.argmax(np.abs(filtrada)))
+
+        energia_total = np.sum(energia[pico:])
+
+        if energia_total <= 0:
+            parametros["D50"][float(fc)] = None
+            parametros["C80"][float(fc)] = None
+            continue
+
+        muestras_50 = int(0.050 * fs)
+        muestras_80 = int(0.080 * fs)
+
+        energia_50 = np.sum(energia[pico : pico + muestras_50])
+        energia_80 = np.sum(energia[pico : pico + muestras_80])
+        energia_despues_80 = energia_total - energia_80
+
+        parametros["D50"][float(fc)] = 100.0 * energia_50 / energia_total
+
+        parametros["C80"][float(fc)] = (
+            10.0 * np.log10(energia_80 / energia_despues_80)
+            if energia_despues_80 > 0 and energia_80 > 0
+            else None
+        )
+
+    return parametros
 
 
 def apply_lundeby(ir: np.ndarray, fs: int) -> tuple[int, float]:
