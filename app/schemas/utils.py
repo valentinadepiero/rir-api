@@ -20,3 +20,10 @@ class SmoothingResponse(BaseModel):
     sample_rate: int
     time_step: float
     envelope: list[float]
+
+class SchroederResponse(BaseModel):
+    sample_rate: int                                
+    num_samples: int                               
+    lundeby_applied: bool = False                   
+    time_step: float                                
+    edc_db: list[float]                             
