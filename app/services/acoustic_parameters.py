@@ -106,7 +106,7 @@ def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
        time." JASA 37(3), 409-412.
     """
-
+    
     ir = np.asarray(ir, dtype=float)
 
     if ir.size == 0:
