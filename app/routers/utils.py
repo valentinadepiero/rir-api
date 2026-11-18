@@ -46,18 +46,26 @@ async def smoothing(
     )
 
 @router.post("/schroeder", response_model=SchroederResponse)
-async def schroeder(file: UploadFile = File(...)):
+async def schroeder(
+    file: UploadFile = File(...)
+):
 
     """Recibe un audio y devuelve su integral de Schroeder."""
-
     with uploaded_file(file) as path:
         try:
-            scresponse = apply_schroeder_integral(path)
+            ufile, fs = load_audio(path)
+            scresponse = apply_schroeder_integral(ufile)
         except ValueError as e:
             raise HTTPException(
                 status_code=422, detail=f"No es un audio válido: {e}"
             ) from e
 
+    step = max(1, round(fs / 1000))
+    duration = len(ufile) / fs
+
     return SchroederResponse(
-        scresponse=scresponse,
+        sample_rate = fs,
+        time_step = step / fs,
+        num_samples = len(ufile),
+        edc_db = scresponse
     )
