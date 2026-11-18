@@ -203,7 +203,86 @@ def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[floa
     .. [1] ISO 3382-1:2009. "Acoustics -- Measurement of room acoustic
        parameters -- Part 1: Performance spaces."
     """
-    raise NotImplementedError("Implementar en Milestone 3")
+    # Validar la señal de entrada.
+    if not isinstance(ir, np.ndarray):
+        raise ValueError("ir debe ser un array de NumPy")
+
+    if ir.ndim != 1 or ir.size == 0:
+        raise ValueError("ir debe ser un array unidimensional no vacio")
+
+    if not np.issubdtype(ir.dtype, np.number) or np.iscomplexobj(ir):
+        raise ValueError("ir debe contener valores numericos reales")
+
+    if not np.all(np.isfinite(ir)):
+        raise ValueError("ir debe contener valores finitos")
+
+    if isinstance(fs, (bool, np.bool_)) or not isinstance(fs, (int, np.integer)) or fs <= 0:
+        raise ValueError("fs debe ser un entero positivo")
+
+    from app.services.filter import filter_single_band
+
+    frecuencias = [125, 250, 500, 1000, 2000, 4000]
+    tramos = {
+        "EDT": (0, -10),
+        "T10": (-5, -15),
+        "T20": (-5, -25),
+        "T30": (-5, -35),
+    }
+
+    parametros = {nombre: {} for nombre in ("EDT", "T10", "T20", "T30", "D50", "C80")}
+
+    ir = ir.astype(np.float64)
+    tiempo = np.arange(len(ir)) / fs
+
+    for fc in frecuencias:
+        if fc * np.sqrt(2) >= fs / 2:
+            continue
+
+        filtrada = filter_single_band(ir, fs, fc)
+        edc = apply_schroeder_integral(filtrada)
+
+        # Calcular EDT, T10, T20 y T30.
+        for nombre, (nivel_superior, nivel_inferior) in tramos.items():
+            mascara = (edc <= nivel_superior) & (edc >= nivel_inferior)
+
+            if np.count_nonzero(mascara) < 2:
+                parametros[nombre][float(fc)] = None
+                continue
+
+            pendiente, _, _ = linear_regression(tiempo[mascara], edc[mascara])
+
+            if pendiente >= 0 or not np.isfinite(pendiente):
+                parametros[nombre][float(fc)] = None
+            else:
+                parametros[nombre][float(fc)] = -60.0 / pendiente
+
+        # Calcular D50 y C80 desde el pico de la señal filtrada.
+        energia = filtrada**2
+        pico = int(np.argmax(np.abs(filtrada)))
+
+        energia_total = np.sum(energia[pico:])
+
+        if energia_total <= 0:
+            parametros["D50"][float(fc)] = None
+            parametros["C80"][float(fc)] = None
+            continue
+
+        muestras_50 = int(0.050 * fs)
+        muestras_80 = int(0.080 * fs)
+
+        energia_50 = np.sum(energia[pico : pico + muestras_50])
+        energia_80 = np.sum(energia[pico : pico + muestras_80])
+        energia_despues_80 = energia_total - energia_80
+
+        parametros["D50"][float(fc)] = 100.0 * energia_50 / energia_total
+
+        parametros["C80"][float(fc)] = (
+            10.0 * np.log10(energia_80 / energia_despues_80)
+            if energia_despues_80 > 0 and energia_80 > 0
+            else None
+        )
+
+    return parametros
 
 
 def apply_lundeby(ir: np.ndarray, fs: int) -> tuple[int, float]:
