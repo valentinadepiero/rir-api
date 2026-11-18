@@ -219,6 +219,94 @@ del aire y de los materiales en frecuencias altas.
 - Las RI no se remuestrearon: ambas tienen 32 kHz y todas las bandas usadas
   quedan por debajo de la frecuencia de Nyquist.
   
+## Validación de M3
+
+Referencia: REW V5.31.3 analizando los mismo WAV (ri_sintetica y ri_larga_real)
+
+A la ri_larga_real se le tuvo que agregar 5ms de ceros al inicio porque sin ellos el EDT de 125Hz daba 0.1s
+
+## Tabla de validación de M3: RIR-API vs REW
+
+Referencia: REW V5.31.3 (octavas, mismos archivos WAV). Tolerancia: tiempos ±10 % (o ±0,5 s si eso es menor); C80 ±1 dB. D50 se informa sin tolerancia.
+
+### RI sintética (`docs/m3/ri_sintetica.wav`, T60 = 2 s en todas las bandas)
+
+| Parámetro | Banda (Hz) | RIR-API | REW | Diferencia | Dentro de tolerancia |
+|---|---|---|---|---|---|
+| EDT | 125 | 2,66 s | 2,59 s | +2,7 % | Sí |
+| EDT | 250 | 1,97 s | 1,97 s | -0,0 % | Sí |
+| EDT | 500 | 2,13 s | 2,12 s | +0,4 % | Sí |
+| EDT | 1000 | 2,28 s | 2,25 s | +1,3 % | Sí |
+| EDT | 2000 | 1,98 s | 1,99 s | -0,5 % | Sí |
+| EDT | 4000 | 2,05 s | 2,04 s | +0,2 % | Sí |
+| T20 | 125 | 1,94 s | 1,97 s | -1,5 % | Sí |
+| T20 | 250 | 1,96 s | 1,98 s | -1,1 % | Sí |
+| T20 | 500 | 2,05 s | 2,04 s | +0,2 % | Sí |
+| T20 | 1000 | 2,02 s | 2,02 s | -0,3 % | Sí |
+| T20 | 2000 | 1,95 s | 1,95 s | -0,2 % | Sí |
+| T20 | 4000 | 1,95 s | 1,95 s | -0,0 % | Sí |
+| T30 | 125 | 1,92 s | 1,96 s | -1,7 % | Sí |
+| T30 | 250 | 2,02 s | 2,02 s | -0,0 % | Sí |
+| T30 | 500 | 1,99 s | 1,99 s | +0,3 % | Sí |
+| T30 | 1000 | 2,00 s | 2,00 s | -0,0 % | Sí |
+| T30 | 2000 | 1,98 s | 1,98 s | +0,0 % | Sí |
+| T30 | 4000 | 1,99 s | 1,99 s | +0,1 % | Sí |
+| C80 | 125 | -1,80 dB | -0,33 dB | -1,47 dB | No |
+| C80 | 250 | -1,92 dB | -1,13 dB | -0,79 dB | Sí |
+| C80 | 500 | -1,76 dB | -2,19 dB | +0,43 dB | Sí |
+| C80 | 1000 | -1,79 dB | -1,74 dB | -0,05 dB | Sí |
+| C80 | 2000 | -1,01 dB | -1,12 dB | +0,11 dB | Sí |
+| C80 | 4000 | -0,99 dB | -0,95 dB | -0,04 dB | Sí |
+| D50 | 125 | 36,3 % | 45,0 % | -8,7 pts | — |
+| D50 | 250 | 28,9 % | 31,4 % | -2,5 pts | — |
+| D50 | 500 | 21,5 % | 23,9 % | -2,4 pts | — |
+| D50 | 1000 | 28,6 % | 28,2 % | +0,4 pts | — |
+| D50 | 2000 | 32,3 % | 31,5 % | +0,8 pts | — |
+| D50 | 4000 | 30,6 % | 31,2 % | -0,6 pts | — |
+
+### RI real (`docs/m3/ri_larga_real_pad.wav`, MIT IR Survey, con 5 ms de ceros al inicio)
+
+| Parámetro | Banda (Hz) | RIR-API | REW | Diferencia | Dentro de tolerancia |
+|---|---|---|---|---|---|
+| EDT | 125 | 1,08 s | 1,14 s | -5,3 % | Sí |
+| EDT | 250 | 1,50 s | 1,50 s | +0,3 % | Sí |
+| EDT | 500 | 1,58 s | 1,60 s | -1,2 % | Sí |
+| EDT | 1000 | 1,51 s | 1,52 s | -0,3 % | Sí |
+| EDT | 2000 | 1,11 s | 1,14 s | -1,8 % | Sí |
+| EDT | 4000 | 0,51 s | 0,54 s | -3,8 % | Sí |
+| T20 | 125 | 1,49 s | 1,43 s | +4,1 % | Sí |
+| T20 | 250 | 1,51 s | 1,52 s | -0,6 % | Sí |
+| T20 | 500 | 1,70 s | 1,71 s | -0,6 % | Sí |
+| T20 | 1000 | 1,58 s | 1,58 s | -0,3 % | Sí |
+| T20 | 2000 | 1,12 s | 1,18 s | -4,7 % | Sí |
+| T20 | 4000 | 0,60 s | 0,64 s | -6,5 % | Sí |
+| T30 | 125 | 1,58 s | 1,55 s | +1,7 % | Sí |
+| T30 | 250 | 1,60 s | 1,60 s | -0,6 % | Sí |
+| T30 | 500 | 1,77 s | 1,77 s | +0,5 % | Sí |
+| T30 | 1000 | 1,63 s | 1,63 s | -0,3 % | Sí |
+| T30 | 2000 | 1,22 s | 1,31 s | -6,6 % | Sí |
+| T30 | 4000 | 0,65 s | 0,71 s | -8,2 % | Sí |
+| C80 | 125 | 2,72 dB | 2,35 dB | +0,37 dB | Sí |
+| C80 | 250 | 1,61 dB | 1,19 dB | +0,42 dB | Sí |
+| C80 | 500 | -0,25 dB | -0,21 dB | -0,04 dB | Sí |
+| C80 | 1000 | 0,13 dB | 0,33 dB | -0,20 dB | Sí |
+| C80 | 2000 | 2,69 dB | 2,81 dB | -0,12 dB | Sí |
+| C80 | 4000 | 9,03 dB | 9,44 dB | -0,41 dB | Sí |
+| D50 | 125 | 52,1 % | 37,7 % | +14,4 pts | — |
+| D50 | 250 | 46,3 % | 39,8 % | +6,5 pts | — |
+| D50 | 500 | 31,5 % | 38,3 % | -6,8 pts | — |
+| D50 | 1000 | 34,1 % | 35,8 % | -1,7 pts | — |
+| D50 | 2000 | 51,2 % | 52,2 % | -1,0 pts | — |
+| D50 | 4000 | 74,6 % | 76,9 % | -2,3 pts | — |
+
+**Resumen:** 47 de 48 comparaciones (EDT, T20, T30 y C80) dentro de la tolerancia.
+
+![Validacion T30](docs/m3/validacion_t30.png)
+
+![Validacion R.Sc.](docs/m3/schroeder_regresiones.png)
+
+![Validacion Filtro de Octava](docs/m3/filtros_octava.png)
+
 ## Branching strategy
 La idea es mantener la rama "main" protegida y sólo realizar commits a la misma cuando esté comprobada la funcionalidad y compatibilidad de los mergeos correspondentes. Sólo se realizarían cambios a main desde la rama "dev" como etapa previa. Luego, se crearán ramas por cada issue que realicen commits a dev para unificarlas.
 
