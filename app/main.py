@@ -27,12 +27,7 @@ app.include_router(signals.router, prefix="/api/v1/signals", tags=["signals"])
 # TODO (M2): endpoint de synthetic-ir (en el mismo router de signals) y router de filters
 app.include_router(filters.router, prefix="/api/v1/filters", tags=["filters"])
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
-app.include_router(
-    acoustics.router,
-    prefix="/api/v1/acoustics",
-    tags=["acoustics"],
-)
-
+app.include_router(acoustics.router, prefix="/api/v1/acoustics", tags=["acoustics"])
 
 @app.get("/")
 async def root():
